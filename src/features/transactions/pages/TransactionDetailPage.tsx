@@ -37,7 +37,7 @@ export default function TransactionDetailPage() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-95 transition-all shadow-sm"
+          className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-95 transition-all shadow-sm cursor-pointer"
         >
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         </button>
@@ -60,9 +60,10 @@ export default function TransactionDetailPage() {
           Eliminar
         </Button>
         <Button
-          variant="primary"
+          variant="secondary"
           fullWidth
           onClick={() => navigate('/movimientos')}
+          className="font-bold shadow-fab"
         >
           Aceptar
         </Button>
