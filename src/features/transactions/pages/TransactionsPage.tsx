@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { useUIStore } from '@/store'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Plus } from 'lucide-react'
 
 export default function TransactionsPage() {
   const { openAddTransaction } = useUIStore()
@@ -24,7 +25,7 @@ export default function TransactionsPage() {
           onClick={openAddTransaction}
           className="shadow-sm"
         >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <Plus className="w-4 h-4 mr-0.5" />
           Nuevo
         </Button>
       </div>
@@ -47,7 +48,7 @@ export default function TransactionsPage() {
             <button
               key={tab}
               onClick={() => setFilterType(tab)}
-              className={`flex-1 py-1.5 rounded-full text-label-md font-bold transition-all ${
+              className={`flex-1 py-1.5 rounded-full text-label-md font-bold transition-all cursor-pointer ${
                 isSelected
                   ? 'bg-surface-container-lowest text-primary shadow-sm'
                   : 'text-on-surface-variant'
@@ -62,7 +63,7 @@ export default function TransactionsPage() {
       {/* Transactions List */}
       {groupedByDate.length === 0 ? (
         <EmptyState
-          icon="search_off"
+          icon="search_x"
           title="No hay movimientos"
           description={
             search

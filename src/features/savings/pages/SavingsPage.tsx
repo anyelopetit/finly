@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { formatCurrency } from '@/lib/calculations'
+import { Plus, PiggyBank, CreditCard } from 'lucide-react'
 
 export default function SavingsPage() {
   const {
@@ -50,7 +51,7 @@ export default function SavingsPage() {
           size="sm"
           onClick={() => (activeTab === 'goals' ? setIsNewGoalOpen(true) : setIsNewDebtOpen(true))}
         >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <Plus className="w-4 h-4 mr-0.5" />
           {activeTab === 'goals' ? 'Nueva Meta' : 'Nueva Deuda'}
         </Button>
       </div>
@@ -71,9 +72,11 @@ export default function SavingsPage() {
             </h2>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-[26px]">
-              {activeTab === 'goals' ? 'savings' : 'credit_card'}
-            </span>
+            {activeTab === 'goals' ? (
+              <PiggyBank className="w-7 h-7" />
+            ) : (
+              <CreditCard className="w-7 h-7" />
+            )}
           </div>
         </div>
 
@@ -98,7 +101,7 @@ export default function SavingsPage() {
       <div className="flex p-1 bg-surface-container-low rounded-full">
         <button
           onClick={() => setActiveTab('goals')}
-          className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all ${
+          className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all cursor-pointer ${
             activeTab === 'goals'
               ? 'bg-surface-container-lowest text-primary shadow-sm'
               : 'text-on-surface-variant'
@@ -108,7 +111,7 @@ export default function SavingsPage() {
         </button>
         <button
           onClick={() => setActiveTab('debts')}
-          className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all ${
+          className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all cursor-pointer ${
             activeTab === 'debts'
               ? 'bg-surface-container-lowest text-primary shadow-sm'
               : 'text-on-surface-variant'
@@ -122,7 +125,7 @@ export default function SavingsPage() {
       {activeTab === 'goals' ? (
         goals.length === 0 ? (
           <EmptyState
-            icon="savings"
+            icon="piggy"
             title="Aún no tienes metas"
             description="Crea tu primer objetivo de ahorro para comprar algo que deseas o crear un fondo de emergencia."
             actionLabel="Crear mi primera meta"
@@ -147,7 +150,7 @@ export default function SavingsPage() {
         )
       ) : debts.length === 0 ? (
         <EmptyState
-          icon="credit_score"
+          icon="credit_card"
           title="¡Sin deudas pendientes!"
           description="Llevar un registro ordenado de tus compromisos te ayuda a liquidarlos más rápido."
           actionLabel="Registrar deuda"

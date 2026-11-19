@@ -1,5 +1,13 @@
 import { motion } from 'framer-motion'
 import type { Insight } from '@/types'
+import {
+  Sparkles,
+  PiggyBank,
+  TrendingUp,
+  AlertTriangle,
+  Flag,
+  ArrowRight,
+} from 'lucide-react'
 
 interface InsightCardProps {
   insight: Insight
@@ -7,27 +15,27 @@ interface InsightCardProps {
 
 const typeConfig = {
   positive_trend: {
-    icon: 'auto_awesome',
+    icon: Sparkles,
     bgIcon: 'bg-primary-container text-on-primary-container',
     gradient: 'from-primary-fixed/40 via-surface-container-low to-surface-container-lowest',
   },
   savings_rate: {
-    icon: 'savings',
+    icon: PiggyBank,
     bgIcon: 'bg-secondary-container/40 text-on-secondary-container',
     gradient: 'from-secondary-fixed/20 via-surface-container-low to-surface-container-lowest',
   },
   category_spike: {
-    icon: 'trending_up',
+    icon: TrendingUp,
     bgIcon: 'bg-error-container/60 text-error',
     gradient: 'from-error-container/20 via-surface-container-low to-surface-container-lowest',
   },
   budget_warning: {
-    icon: 'warning',
+    icon: AlertTriangle,
     bgIcon: 'bg-error-container/60 text-error',
     gradient: 'from-error-container/20 via-surface-container-low to-surface-container-lowest',
   },
   goal_progress: {
-    icon: 'flag',
+    icon: Flag,
     bgIcon: 'bg-primary-fixed text-primary',
     gradient: 'from-primary-fixed/40 via-surface-container-low to-surface-container-lowest',
   },
@@ -35,6 +43,7 @@ const typeConfig = {
 
 export function InsightCard({ insight }: InsightCardProps) {
   const config = typeConfig[insight.type]
+  const Icon = config.icon
 
   return (
     <motion.div
@@ -47,12 +56,7 @@ export function InsightCard({ insight }: InsightCardProps) {
       <div
         className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-0.5 ${config.bgIcon}`}
       >
-        <span
-          className="material-symbols-outlined text-[20px]"
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          {config.icon}
-        </span>
+        <Icon className="w-5 h-5" />
       </div>
 
       {/* Content */}
@@ -67,16 +71,21 @@ export function InsightCard({ insight }: InsightCardProps) {
         </div>
         <p
           className="text-body-sm text-on-surface-variant leading-snug"
-          dangerouslySetInnerHTML={{ __html: insight.message.replace(/\*\*(.*?)\*\*/g, '<strong class="text-on-surface font-semibold">$1</strong>') }}
+          dangerouslySetInnerHTML={{
+            __html: insight.message.replace(
+              /\*\*(.*?)\*\*/g,
+              '<strong class="text-on-surface font-semibold">$1</strong>'
+            ),
+          }}
         />
       </div>
 
       {/* Arrow */}
       <motion.button
         whileTap={{ scale: 0.9 }}
-        className="w-8 h-8 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shrink-0"
+        className="w-8 h-8 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shrink-0 cursor-pointer"
       >
-        <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+        <ArrowRight className="w-4 h-4" />
       </motion.button>
     </motion.div>
   )
@@ -87,9 +96,7 @@ export function InsightPlaceholder() {
   return (
     <div className="bg-gradient-to-r from-primary-fixed/30 via-surface-container-low to-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-start gap-space-md">
       <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
-        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-          auto_awesome
-        </span>
+        <Sparkles className="w-5 h-5" />
       </div>
       <div className="flex-1">
         <p className="text-label-md text-primary font-bold mb-1">Insight de Finly</p>

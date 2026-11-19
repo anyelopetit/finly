@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import type { Transaction } from '@/types'
 import { formatCurrency } from '@/lib/calculations'
 import { usePrivacyStore } from '@/store'
+import { CategoryIcon } from '@/components/common/CategoryIcon'
 import { format, parseISO, isToday, isYesterday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
@@ -56,9 +57,10 @@ export function TransactionItem({ transaction, index = 0 }: TransactionItemProps
             colorClass
           )}
         >
-          <span className="material-symbols-outlined text-[22px]">
-            {transaction.category?.icon ?? 'receipt'}
-          </span>
+          <CategoryIcon
+            name={transaction.category?.icon || transaction.category?.name}
+            className="w-5 h-5"
+          />
         </motion.div>
 
         {/* Description + meta */}

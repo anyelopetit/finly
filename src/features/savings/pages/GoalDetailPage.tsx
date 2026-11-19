@@ -6,6 +6,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { ArrowLeft, Trash2, Calendar, Flag } from 'lucide-react'
 
 export default function GoalDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -17,7 +18,7 @@ export default function GoalDetailPage() {
   if (!goal) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <span className="material-symbols-outlined text-[48px] text-on-surface-variant">flag</span>
+        <Flag className="w-12 h-12 text-on-surface-variant" />
         <h2 className="text-headline-sm font-bold text-on-surface">Meta no encontrada</h2>
         <Button onClick={() => navigate('/metas')} variant="primary">
           Volver a metas
@@ -44,14 +45,14 @@ export default function GoalDetailPage() {
           onClick={() => navigate(-1)}
           className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-95 transition-all shadow-sm cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-label-lg font-bold text-on-surface">Detalle de Meta</h1>
         <button
           onClick={handleDelete}
           className="w-10 h-10 rounded-full bg-error-container/40 text-error flex items-center justify-center hover:bg-error-container active:scale-95 transition-all cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[20px]">delete</span>
+          <Trash2 className="w-5 h-5" />
         </button>
       </div>
 
@@ -84,7 +85,7 @@ export default function GoalDetailPage() {
 
         {goal.deadline && (
           <div className="flex items-center gap-2 pt-2 text-body-sm text-on-surface-variant">
-            <span className="material-symbols-outlined text-[18px]">event</span>
+            <Calendar className="w-4.5 h-4.5" />
             <span>Fecha límite: {goal.deadline}</span>
           </div>
         )}

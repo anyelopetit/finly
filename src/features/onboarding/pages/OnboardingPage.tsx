@@ -8,6 +8,7 @@ import { OnboardingStep1 } from '../components/OnboardingStep1'
 import { OnboardingStep2 } from '../components/OnboardingStep2'
 import { OnboardingStep3 } from '../components/OnboardingStep3'
 import type { Currency } from '@/types'
+import { ArrowRight, Rocket } from 'lucide-react'
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
@@ -107,7 +108,7 @@ export default function OnboardingPage() {
             onClick={() => setStep((s) => (s + 1) as 2 | 3)}
           >
             Continuar
-            <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+            <ArrowRight className="w-5 h-5 ml-1" />
           </Button>
         ) : (
           <motion.div layoutId="cta-button">
@@ -119,7 +120,7 @@ export default function OnboardingPage() {
               className="shadow-fab glow-lime"
             >
               Comenzar con Finly
-              <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
+              <Rocket className="w-5 h-5 ml-1" />
             </Button>
           </motion.div>
         )}

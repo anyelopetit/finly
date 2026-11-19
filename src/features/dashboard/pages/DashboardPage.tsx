@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { formatPercent } from '@/lib/calculations'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { PiggyBank, PlusCircle } from 'lucide-react'
 
 export default function DashboardPage() {
   const { isHidden } = usePrivacyStore()
@@ -92,7 +93,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-secondary-fixed/30 flex items-center justify-center text-on-secondary-container">
-                <span className="material-symbols-outlined text-[18px]">savings</span>
+                <PiggyBank className="w-4.5 h-4.5" />
               </div>
               <div>
                 <h2 className="text-headline-sm font-bold text-on-surface">Ahorro y Metas</h2>
@@ -122,7 +123,7 @@ export default function DashboardPage() {
 
         {!hasTransactions ? (
           <EmptyState
-            icon="receipt_long"
+            icon="receipt"
             title="¡Empecemos!"
             description="Registra tu primer ingreso o gasto para conocer mejor tus finanzas."
             actionLabel="Registrar movimiento"
@@ -144,7 +145,7 @@ export default function DashboardPage() {
         onClick={openAddTransaction}
         className="shadow-fab"
       >
-        <span className="material-symbols-outlined text-[22px]">add_circle</span>
+        <PlusCircle className="w-5 h-5 mr-1" />
         Registrar Nuevo Movimiento
       </Button>
     </div>

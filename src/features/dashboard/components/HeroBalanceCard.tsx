@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { usePrivacyStore } from '@/store'
 import { formatCurrency } from '@/lib/calculations'
+import { Eye, EyeOff, ArrowLeftRight, ShieldCheck } from 'lucide-react'
 
 interface HeroBalanceCardProps {
   balance: number
@@ -60,9 +61,7 @@ export function HeroBalanceCard({
             onClick={toggle}
             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[18px]">
-              {isHidden ? 'visibility_off' : 'visibility'}
-            </span>
+            {isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </motion.button>
         </div>
       </div>
@@ -85,17 +84,15 @@ export function HeroBalanceCard({
             <span className="text-label-sm">
               {isHidden ? '••••••' : `≈ ${vesBalance.toLocaleString('es-VE', { minimumFractionDigits: 2 })} VES`}
             </span>
-            <span className="material-symbols-outlined text-[14px] text-surface-variant">sync_alt</span>
+            <ArrowLeftRight className="w-3.5 h-3.5 text-surface-variant" />
           </div>
         )}
       </div>
 
       {/* Footer */}
       <div className="relative z-10 flex items-center justify-between pt-1">
-        <div className="flex items-center gap-2 text-surface-container-lowest/80 text-label-sm">
-          <span className="material-symbols-outlined text-[16px] text-secondary-fixed">
-            shield_locked
-          </span>
+        <div className="flex items-center gap-1.5 text-surface-container-lowest/80 text-label-sm">
+          <ShieldCheck className="w-4 h-4 text-secondary-fixed" />
           <span>Cuenta Principal</span>
         </div>
       </div>

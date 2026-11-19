@@ -1,12 +1,43 @@
-import { type InputHTMLAttributes, forwardRef, useState } from 'react'
+import { type InputHTMLAttributes, forwardRef, isValidElement } from 'react'
 import { cn } from '@/lib/utils'
+import { AlertCircle, Calendar, Edit3, Lock, Mail, Search, User, ArrowLeftRight } from 'lucide-react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
   hint?: string
-  leftIcon?: string // material symbol name
+  leftIcon?: React.ReactNode
   rightAction?: React.ReactNode
+}
+
+function renderLeftIcon(icon: React.ReactNode) {
+  if (isValidElement(icon)) {
+    return icon
+  }
+  if (typeof icon === 'string') {
+    switch (icon) {
+      case 'person':
+      case 'user':
+        return <User className="w-5 h-5" />
+      case 'search':
+        return <Search className="w-5 h-5" />
+      case 'calendar_today':
+      case 'calendar':
+        return <Calendar className="w-5 h-5" />
+      case 'edit_note':
+      case 'edit':
+        return <Edit3 className="w-5 h-5" />
+      case 'mail':
+        return <Mail className="w-5 h-5" />
+      case 'lock':
+        return <Lock className="w-5 h-5" />
+      case 'currency_exchange':
+        return <ArrowLeftRight className="w-5 h-5" />
+      default:
+        return null
+    }
+  }
+  return null
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -25,9 +56,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <span className="absolute left-4 material-symbols-outlined text-[20px] text-on-surface-variant pointer-events-none">
-              {leftIcon}
-            </span>
+            <div className="absolute left-3.5 text-on-surface-variant pointer-events-none flex items-center justify-center">
+              {renderLeftIcon(leftIcon)}
+            </div>
           )}
           <input
             ref={ref}
@@ -50,7 +81,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
         {error && (
           <span className="text-label-sm text-error flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">error</span>
+            <AlertCircle className="w-3.5 h-3.5" />
             {error}
           </span>
         )}

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { Transaction } from '@/types'
 import { formatCurrency } from '@/lib/calculations'
+import { CategoryIcon } from '@/components/common/CategoryIcon'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -22,9 +23,10 @@ export function ReceiptCard({ transaction }: ReceiptCardProps) {
           isIncome ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed text-primary'
         }`}
       >
-        <span className="material-symbols-outlined text-[32px]">
-          {transaction.category?.icon ?? 'receipt'}
-        </span>
+        <CategoryIcon
+          name={transaction.category?.icon || transaction.category?.name}
+          className="w-8 h-8"
+        />
       </div>
 
       <div className="space-y-1">

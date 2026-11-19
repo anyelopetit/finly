@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/Button'
+import { RotateCcw, Trash2 } from 'lucide-react'
 
 interface DemoDataSectionProps {
   onResetDemo: () => void
@@ -19,7 +20,7 @@ export function DemoDataSection({ onResetDemo, onClearAll }: DemoDataSectionProp
           fullWidth
           onClick={onResetDemo}
         >
-          <span className="material-symbols-outlined text-[18px]">restart_alt</span>
+          <RotateCcw className="w-4.5 h-4.5 mr-1" />
           Restaurar Datos Demo (Ana)
         </Button>
 
@@ -29,7 +30,7 @@ export function DemoDataSection({ onResetDemo, onClearAll }: DemoDataSectionProp
           onClick={onClearAll}
           className="text-error border-error/20 hover:bg-error-container/20"
         >
-          <span className="material-symbols-outlined text-[18px]">delete_sweep</span>
+          <Trash2 className="w-4.5 h-4.5 mr-1" />
           Limpiar Todos los Datos (Empezar Vacío)
         </Button>
       </div>

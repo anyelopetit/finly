@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { usePrivacyStore, useCurrencyStore } from '@/store'
+import { Bell, User } from 'lucide-react'
 
 interface TopBarProps {
   showLogo?: boolean
 }
 
 export function TopBar({ showLogo = true }: TopBarProps) {
-  const { isHidden, toggle } = usePrivacyStore()
   const { activeCurrency, setActiveCurrency } = useCurrencyStore()
 
   return (
@@ -33,7 +33,7 @@ export function TopBar({ showLogo = true }: TopBarProps) {
             onClick={() =>
               setActiveCurrency(activeCurrency === 'USD' ? 'VES' : 'USD')
             }
-            className="min-h-[44px] px-2 py-1 flex items-center gap-1 rounded-full bg-surface-container-low"
+            className="min-h-[44px] px-2 py-1 flex items-center gap-1 rounded-full bg-surface-container-low cursor-pointer"
           >
             <span
               className={`text-label-sm font-bold px-1.5 py-0.5 rounded-full transition-all ${
@@ -59,9 +59,9 @@ export function TopBar({ showLogo = true }: TopBarProps) {
           <motion.button
             whileTap={{ scale: 0.9 }}
             aria-label="Notificaciones"
-            className="w-11 h-11 relative flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant shadow-sm"
+            className="w-11 h-11 relative flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant shadow-sm cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[22px]">notifications</span>
+            <Bell className="w-5 h-5" />
             <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-secondary-fixed ring-2 ring-surface" />
           </motion.button>
 
@@ -71,9 +71,7 @@ export function TopBar({ showLogo = true }: TopBarProps) {
               whileTap={{ scale: 0.9 }}
               className="w-9 h-9 rounded-full bg-primary flex items-center justify-center cursor-pointer"
             >
-              <span className="material-symbols-outlined text-on-primary text-[18px]">
-                person
-              </span>
+              <User className="w-4.5 h-4.5 text-on-primary" />
             </motion.div>
           </Link>
         </div>

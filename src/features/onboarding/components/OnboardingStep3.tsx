@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/Input'
+import { CategoryIcon } from '@/components/common/CategoryIcon'
 import type { Currency } from '@/types'
 
 interface OnboardingStep3Props {
@@ -51,6 +52,7 @@ export function OnboardingStep3({
       <Input
         label="¿Cómo te llamas?"
         placeholder="Tu nombre"
+        leftIcon="user"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
       />
@@ -104,9 +106,7 @@ export function OnboardingStep3({
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
                 }`}
               >
-                <span className="material-symbols-outlined text-[16px]">
-                  {cat.icon}
-                </span>
+                <CategoryIcon name={cat.icon} className="w-4 h-4" />
                 {cat.name}
               </button>
             )

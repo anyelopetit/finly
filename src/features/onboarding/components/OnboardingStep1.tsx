@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Wallet } from 'lucide-react'
 
 export function OnboardingStep1() {
   return (
@@ -28,9 +29,7 @@ export function OnboardingStep1() {
           ease: 'easeInOut',
         }}
       >
-        <span className="material-symbols-outlined text-[54px] text-on-secondary-fixed">
-          account_balance_wallet
-        </span>
+        <Wallet className="w-14 h-14 text-on-secondary-fixed stroke-[2]" />
       </motion.div>
 
       <div className="space-y-3 max-w-xs">

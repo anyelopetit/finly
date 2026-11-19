@@ -4,7 +4,9 @@ import { useUIStore, useCurrencyStore } from '@/store'
 import { useDataStore } from '@/store/dataStore'
 import { Button } from '@/components/ui/Button'
 import { AmountInput, Input } from '@/components/ui/Input'
+import { CategoryIcon } from '@/components/common/CategoryIcon'
 import type { Currency, TransactionType } from '@/types'
+import { X, CheckCircle } from 'lucide-react'
 
 export function AddTransactionModal() {
   const { isAddTransactionOpen, closeAddTransaction } = useUIStore()
@@ -72,9 +74,9 @@ export function AddTransactionModal() {
               <button
                 type="button"
                 onClick={closeAddTransaction}
-                className="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all"
+                className="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -86,7 +88,7 @@ export function AddTransactionModal() {
                     setType('expense')
                     setSelectedCategoryId('')
                   }}
-                  className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all ${
+                  className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all cursor-pointer ${
                     type === 'expense'
                       ? 'bg-error text-white shadow-sm'
                       : 'text-on-surface-variant'
@@ -100,7 +102,7 @@ export function AddTransactionModal() {
                     setType('income')
                     setSelectedCategoryId('')
                   }}
-                  className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all ${
+                  className={`flex-1 py-2 rounded-full text-label-md font-bold transition-all cursor-pointer ${
                     type === 'income'
                       ? 'bg-secondary text-white shadow-sm'
                       : 'text-on-surface-variant'
@@ -124,7 +126,7 @@ export function AddTransactionModal() {
                   <button
                     type="button"
                     onClick={() => setCurrency('USD')}
-                    className={`px-3 py-1 rounded-full text-label-sm font-bold transition-all ${
+                    className={`px-3 py-1 rounded-full text-label-sm font-bold transition-all cursor-pointer ${
                       currency === 'USD'
                         ? 'bg-primary text-white shadow-sm'
                         : 'bg-surface-container-low text-on-surface-variant'
@@ -135,7 +137,7 @@ export function AddTransactionModal() {
                   <button
                     type="button"
                     onClick={() => setCurrency('VES')}
-                    className={`px-3 py-1 rounded-full text-label-sm font-bold transition-all ${
+                    className={`px-3 py-1 rounded-full text-label-sm font-bold transition-all cursor-pointer ${
                       currency === 'VES'
                         ? 'bg-primary text-white shadow-sm'
                         : 'bg-surface-container-low text-on-surface-variant'
@@ -158,15 +160,13 @@ export function AddTransactionModal() {
                         key={cat.id}
                         type="button"
                         onClick={() => setSelectedCategoryId(cat.id)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-2xl border transition-all ${
+                        className={`flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
                           isSelected
                             ? 'border-primary bg-primary-fixed/40 text-primary shadow-sm scale-105'
                             : 'border-transparent bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[24px] mb-1">
-                          {cat.icon}
-                        </span>
+                        <CategoryIcon name={cat.icon || cat.name} className="w-6 h-6 mb-1" />
                         <span className="text-[11px] font-medium text-center line-clamp-1 leading-tight">
                           {cat.name}
                         </span>
@@ -179,7 +179,7 @@ export function AddTransactionModal() {
               <Input
                 label="Descripción / Nota (opcional)"
                 placeholder="Ej. Almuerzo de trabajo"
-                leftIcon="edit_note"
+                leftIcon="edit"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -187,7 +187,7 @@ export function AddTransactionModal() {
               <Input
                 type="date"
                 label="Fecha"
-                leftIcon="calendar_today"
+                leftIcon="calendar"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
@@ -199,7 +199,7 @@ export function AddTransactionModal() {
                 size="lg"
                 className="mt-4"
               >
-                <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                <CheckCircle className="w-5 h-5 mr-1" />
                 Guardar {type === 'expense' ? 'Gasto' : 'Ingreso'}
               </Button>
             </form>
