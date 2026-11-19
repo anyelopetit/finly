@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9ff;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    overscroll-behavior: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Safe area insets for iOS notch */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Hide scrollbar globally */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+}
+
+@layer components {
+  /* Material Symbols */
+  .material-icon {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  .material-icon-filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Tap highlight removal */
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  /* Transition defaults */
+  .transition-finly {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer utilities {
+  /* Balance number privacy blur */
+  .balance-hidden {
+    filter: blur(8px);
+    user-select: none;
+  }
+
+  /* Neon lime glow */
+  .glow-lime {
+    box-shadow: 0 8px 20px rgba(190, 245, 50, 0.4);
+  }
+
+  .glow-lime:hover {
+    box-shadow: 0 12px 28px rgba(190, 245, 50, 0.6);
+  }
+
+  /* Lavender glow */
+  .glow-primary {
+    box-shadow: 0 4px 16px rgba(93, 57, 174, 0.3);
+  }
+}

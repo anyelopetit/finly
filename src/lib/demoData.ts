@@ -1,0 +1,253 @@
+import type { Category, Debt, Goal, Profile, Transaction } from '@/types'
+import { DEFAULT_CATEGORIES } from '@/types'
+
+export const DEMO_PROFILE: Profile = {
+  id: 'user-demo-1',
+  display_name: 'Ana',
+  email: 'ana@finly.app',
+  primary_currency: 'USD',
+  initial_balance_usd: 1250.0,
+  initial_balance_ves: 45000.0,
+  tracking_start_date: '2026-01-01',
+  created_at: '2026-01-01T00:00:00Z',
+  updated_at: '2026-01-01T00:00:00Z',
+}
+
+export const DEMO_CATEGORIES: Category[] = DEFAULT_CATEGORIES.map((cat, idx) => ({
+  ...cat,
+  id: `cat-${idx + 1}`,
+  user_id: null,
+  created_at: '2026-01-01T00:00:00Z',
+}))
+
+const catMap = DEMO_CATEGORIES.reduce((acc, cat) => {
+  acc[cat.name] = cat
+  return acc
+}, {} as Record<string, Category>)
+
+const now = new Date()
+const currentYear = now.getFullYear()
+const currentMonth = String(now.getMonth() + 1).padStart(2, '0')
+const prevMonthNum = now.getMonth() === 0 ? 12 : now.getMonth()
+const prevYearNum = now.getMonth() === 0 ? currentYear - 1 : currentYear
+const prevMonth = String(prevMonthNum).padStart(2, '0')
+
+export const DEMO_TRANSACTIONS: Transaction[] = [
+  // Current month transactions
+  {
+    id: 'tx-1',
+    user_id: 'user-demo-1',
+    type: 'income',
+    amount: 850.0,
+    currency: 'USD',
+    category_id: catMap['Salario']?.id || 'cat-1',
+    category: catMap['Salario'],
+    description: 'Nómina Quincenal',
+    date: `${currentYear}-${currentMonth}-15`,
+    created_at: `${currentYear}-${currentMonth}-15T10:00:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-15T10:00:00Z`,
+  },
+  {
+    id: 'tx-2',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 142.5,
+    currency: 'USD',
+    category_id: catMap['Alimentación']?.id || 'cat-5',
+    category: catMap['Alimentación'],
+    description: 'Supermercado semanal',
+    date: `${currentYear}-${currentMonth}-16`,
+    created_at: `${currentYear}-${currentMonth}-16T14:30:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-16T14:30:00Z`,
+  },
+  {
+    id: 'tx-3',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 35.0,
+    currency: 'USD',
+    category_id: catMap['Servicios']?.id || 'cat-8',
+    category: catMap['Servicios'],
+    description: 'Servicio de Internet Fibra',
+    date: `${currentYear}-${currentMonth}-14`,
+    created_at: `${currentYear}-${currentMonth}-14T09:15:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-14T09:15:00Z`,
+  },
+  {
+    id: 'tx-4',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 12.0,
+    currency: 'USD',
+    category_id: catMap['Cafeterías']?.id || 'cat-14',
+    category: catMap['Cafeterías'],
+    description: 'Café de especialidad y snack',
+    date: `${currentYear}-${currentMonth}-13`,
+    created_at: `${currentYear}-${currentMonth}-13T16:20:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-13T16:20:00Z`,
+  },
+  {
+    id: 'tx-5',
+    user_id: 'user-demo-1',
+    type: 'income',
+    amount: 120.0,
+    currency: 'USD',
+    category_id: catMap['Independiente']?.id || 'cat-2',
+    category: catMap['Independiente'],
+    description: 'Diseño freelance para cliente',
+    date: `${currentYear}-${currentMonth}-10`,
+    created_at: `${currentYear}-${currentMonth}-10T11:00:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-10T11:00:00Z`,
+  },
+  {
+    id: 'tx-6',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 25.0,
+    currency: 'USD',
+    category_id: catMap['Transporte']?.id || 'cat-6',
+    category: catMap['Transporte'],
+    description: 'Combustible y estacionamiento',
+    date: `${currentYear}-${currentMonth}-08`,
+    created_at: `${currentYear}-${currentMonth}-08T08:45:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-08T08:45:00Z`,
+  },
+  {
+    id: 'tx-7',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 58.0,
+    currency: 'USD',
+    category_id: catMap['Comida a domicilio']?.id || 'cat-15',
+    category: catMap['Comida a domicilio'],
+    description: 'Cena fin de semana',
+    date: `${currentYear}-${currentMonth}-05`,
+    created_at: `${currentYear}-${currentMonth}-05T20:30:00Z`,
+    updated_at: `${currentYear}-${currentMonth}-05T20:30:00Z`,
+  },
+  // Previous month transactions for comparisons
+  {
+    id: 'tx-8',
+    user_id: 'user-demo-1',
+    type: 'income',
+    amount: 900.0,
+    currency: 'USD',
+    category_id: catMap['Salario']?.id || 'cat-1',
+    category: catMap['Salario'],
+    description: 'Nómina mensual',
+    date: `${prevYearNum}-${prevMonth}-15`,
+    created_at: `${prevYearNum}-${prevMonth}-15T10:00:00Z`,
+    updated_at: `${prevYearNum}-${prevMonth}-15T10:00:00Z`,
+  },
+  {
+    id: 'tx-9',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 320.0,
+    currency: 'USD',
+    category_id: catMap['Alimentación']?.id || 'cat-5',
+    category: catMap['Alimentación'],
+    description: 'Supermercado total mes anterior',
+    date: `${prevYearNum}-${prevMonth}-20`,
+    created_at: `${prevYearNum}-${prevMonth}-20T12:00:00Z`,
+    updated_at: `${prevYearNum}-${prevMonth}-20T12:00:00Z`,
+  },
+  {
+    id: 'tx-10',
+    user_id: 'user-demo-1',
+    type: 'expense',
+    amount: 60.0,
+    currency: 'USD',
+    category_id: catMap['Servicios']?.id || 'cat-8',
+    category: catMap['Servicios'],
+    description: 'Servicios básicos mes anterior',
+    date: `${prevYearNum}-${prevMonth}-10`,
+    created_at: `${prevYearNum}-${prevMonth}-10T10:00:00Z`,
+    updated_at: `${prevYearNum}-${prevMonth}-10T10:00:00Z`,
+  },
+]
+
+export const DEMO_GOALS: Goal[] = [
+  {
+    id: 'goal-1',
+    user_id: 'user-demo-1',
+    name: 'Fondo de Emergencia',
+    emoji: '🛡️',
+    target_amount: 1000.0,
+    currency: 'USD',
+    deadline: `${currentYear}-12-31`,
+    created_at: `${currentYear}-01-01T00:00:00Z`,
+    updated_at: `${currentYear}-01-01T00:00:00Z`,
+    contributions: [
+      {
+        id: 'gc-1',
+        goal_id: 'goal-1',
+        user_id: 'user-demo-1',
+        amount: 400.0,
+        currency: 'USD',
+        note: 'Ahorro inicial',
+        date: `${currentYear}-01-05`,
+        created_at: `${currentYear}-01-05T00:00:00Z`,
+      },
+      {
+        id: 'gc-2',
+        goal_id: 'goal-1',
+        user_id: 'user-demo-1',
+        amount: 250.0,
+        currency: 'USD',
+        note: 'Aporte de bonificación',
+        date: `${currentYear}-${currentMonth}-02`,
+        created_at: `${currentYear}-${currentMonth}-02T00:00:00Z`,
+      },
+    ],
+  },
+  {
+    id: 'goal-2',
+    user_id: 'user-demo-1',
+    name: 'Viaje a Margarita',
+    emoji: '🏖️',
+    target_amount: 500.0,
+    currency: 'USD',
+    deadline: `${currentYear}-08-15`,
+    created_at: `${currentYear}-01-10T00:00:00Z`,
+    updated_at: `${currentYear}-01-10T00:00:00Z`,
+    contributions: [
+      {
+        id: 'gc-3',
+        goal_id: 'goal-2',
+        user_id: 'user-demo-1',
+        amount: 180.0,
+        currency: 'USD',
+        note: 'Primer apartado',
+        date: `${currentYear}-${currentMonth}-04`,
+        created_at: `${currentYear}-${currentMonth}-04T00:00:00Z`,
+      },
+    ],
+  },
+]
+
+export const DEMO_DEBTS: Debt[] = [
+  {
+    id: 'debt-1',
+    user_id: 'user-demo-1',
+    name: 'Tarjeta de Crédito',
+    initial_amount: 300.0,
+    currency: 'USD',
+    creditor: 'Banco',
+    due_date: `${currentYear}-${currentMonth}-28`,
+    created_at: `${currentYear}-01-01T00:00:00Z`,
+    updated_at: `${currentYear}-01-01T00:00:00Z`,
+    payments: [
+      {
+        id: 'dp-1',
+        debt_id: 'debt-1',
+        user_id: 'user-demo-1',
+        amount: 120.0,
+        currency: 'USD',
+        date: `${currentYear}-${currentMonth}-10`,
+        note: 'Pago quincenal',
+        created_at: `${currentYear}-${currentMonth}-10T00:00:00Z`,
+      },
+    ],
+  },
+]

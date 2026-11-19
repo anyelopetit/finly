@@ -1,0 +1,5 @@
+export { default as DashboardPage } from './pages/DashboardPage'
+export { HeroBalanceCard } from './components/HeroBalanceCard'
+export { SpendingBars } from './components/SpendingBars'
+export { FinancialSummaryPills } from './components/FinancialSummaryPills'
+export { useDashboard } from './hooks/useDashboard'
