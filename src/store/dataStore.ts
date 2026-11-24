@@ -10,6 +10,8 @@ import type {
   Profile,
   Transaction,
 } from '@/types'
+import { useCurrencyStore } from '@/store'
+import { calculateEquivalent } from '@/lib/exchangeRates'
 import {
   DEMO_CATEGORIES,
   DEMO_DEBTS,
@@ -59,6 +61,15 @@ export const useDataStore = create<DataState>()(
         const categories = get().categories
         const category = categories.find((c) => c.id === input.category_id)
         const nowIso = new Date().toISOString()
+        const currencyState = useCurrencyStore.getState()
+
+        const appliedRate = input.exchange_rate || currencyState.exchangeRate
+        const appliedSource = input.exchange_rate_source || currencyState.source || 'BCV'
+        const appliedDate = input.exchange_rate_date || currencyState.effectiveDate || nowIso.split('T')[0]
+        const equivalentAmount =
+          input.equivalent_amount ??
+          calculateEquivalent(Number(input.amount), input.currency, appliedRate)
+
         const newTx: Transaction = {
           id: `tx-${Date.now()}`,
           user_id: get().profile.id,
@@ -69,6 +80,10 @@ export const useDataStore = create<DataState>()(
           category: category,
           description: input.description || category?.name || 'Movimiento',
           date: input.date,
+          exchange_rate: appliedRate,
+          exchange_rate_source: appliedSource,
+          exchange_rate_date: appliedDate,
+          equivalent_amount: equivalentAmount,
           created_at: nowIso,
           updated_at: nowIso,
         }

@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/Button'
 import { AmountInput, Input } from '@/components/ui/Input'
 import { CategoryIcon } from '@/components/common/CategoryIcon'
 import { formatCurrency } from '@/lib/calculations'
-import type { Currency, TransactionType } from '@/types'
-import { X, CheckCircle, Check } from 'lucide-react'
+import { calculateEquivalent } from '@/lib/exchangeRates'
+import type { Currency, RateSource, TransactionType } from '@/types'
+import { X, CheckCircle, Check, ArrowRightLeft, SlidersHorizontal } from 'lucide-react'
 
 export function AddTransactionModal() {
   const { isAddTransactionOpen, closeAddTransaction, setLastCreatedTransactionId } = useUIStore()
-  const { activeCurrency } = useCurrencyStore()
+  const { activeCurrency, exchangeRate, effectiveDate, source, isStale } = useCurrencyStore()
   const { categories, addTransaction } = useDataStore()
 
   const [type, setType] = useState<TransactionType>('expense')
@@ -21,6 +22,19 @@ export function AddTransactionModal() {
   const [description, setDescription] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [error, setError] = useState('')
+
+  // Exchange rate custom override state
+  const [isCustomRate, setIsCustomRate] = useState(false)
+  const [customRateInput, setCustomRateInput] = useState('')
+
+  const activeRate = isCustomRate && parseFloat(customRateInput) > 0
+    ? parseFloat(customRateInput)
+    : exchangeRate
+
+  const parsedAmount = parseFloat(amount) || 0
+  const equivalentPreview = parsedAmount > 0
+    ? calculateEquivalent(parsedAmount, currency, activeRate)
+    : 0
 
   // State when user taps "Guardar" to trigger morphing into card
   const [createdTxId, setCreatedTxId] = useState<string | null>(null)
@@ -48,6 +62,10 @@ export function AddTransactionModal() {
       category_id: selectedCategoryId,
       description: description.trim() || undefined,
       date,
+      exchange_rate: activeRate,
+      exchange_rate_source: (isCustomRate ? 'MANUAL' : (source as RateSource)) || 'BCV',
+      exchange_rate_date: isCustomRate ? date : effectiveDate,
+      equivalent_amount: equivalentPreview,
     })
 
     // Set the created transaction ID for shared element animation
@@ -65,6 +83,8 @@ export function AddTransactionModal() {
         setAmount('')
         setDescription('')
         setError('')
+        setIsCustomRate(false)
+        setCustomRateInput('')
       }, 400)
     }, 320)
   }
@@ -74,6 +94,8 @@ export function AddTransactionModal() {
     setIsTransforming(false)
     setCreatedTxId(null)
     setError('')
+    setIsCustomRate(false)
+    setCustomRateInput('')
     closeAddTransaction()
   }
 
@@ -143,7 +165,12 @@ export function AddTransactionModal() {
                     {type === 'income' ? '+' : '-'}
                     {formatCurrency(parseFloat(amount) || 0, currency)}
                   </p>
-                  <span className="text-label-sm text-on-surface-variant">{currency}</span>
+                  {equivalentPreview > 0 && (
+                    <p className="text-[11px] text-on-surface-variant font-medium">
+                      ≈ {formatCurrency(equivalentPreview, currency === 'USD' ? 'VES' : 'USD')}
+                    </p>
+                  )}
+                  <span className="text-[11px] text-on-surface-variant font-semibold">{currency}</span>
                 </div>
               </motion.div>
             ) : (
@@ -227,6 +254,73 @@ export function AddTransactionModal() {
                       >
                         VES (Bs.)
                       </button>
+                    </div>
+
+                    {/* Real-time Exchange Rate Banner & Live Conversion */}
+                    <div className="mt-3 p-3 rounded-2xl bg-surface-container-low/80 border border-outline-variant/30 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-label-sm font-semibold text-on-surface">
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              isStale ? 'bg-amber-500' : 'bg-secondary'
+                            }`}
+                          />
+                          <span>
+                            Tasa {isCustomRate ? 'Personalizada' : source}: 1 USD ={' '}
+                            {activeRate.toLocaleString('es-VE', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 4,
+                            })}{' '}
+                            Bs.
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!isCustomRate) {
+                              setCustomRateInput(activeRate.toString())
+                            }
+                            setIsCustomRate(!isCustomRate)
+                          }}
+                          className="flex items-center gap-1 text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                        >
+                          <SlidersHorizontal className="w-3 h-3" />
+                          {isCustomRate ? 'Usar BCV' : 'Personalizar'}
+                        </button>
+                      </div>
+
+                      {/* Custom rate input when active */}
+                      {isCustomRate && (
+                        <div className="pt-1 flex items-center gap-2">
+                          <span className="text-xs text-on-surface-variant font-medium shrink-0">
+                            1 USD en Bs:
+                          </span>
+                          <input
+                            type="number"
+                            step="0.0001"
+                            placeholder="Ej. 920.50"
+                            value={customRateInput}
+                            onChange={(e) => setCustomRateInput(e.target.value)}
+                            className="w-full px-2.5 py-1 text-sm rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold focus:outline-none focus:ring-1 focus:ring-primary"
+                          />
+                        </div>
+                      )}
+
+                      {/* Live equivalent calculation */}
+                      {parsedAmount > 0 && (
+                        <div className="pt-1.5 border-t border-outline-variant/20 flex items-center justify-between text-body-sm">
+                          <span className="text-on-surface-variant flex items-center gap-1 text-xs">
+                            <ArrowRightLeft className="w-3.5 h-3.5 text-primary" />
+                            Equivalente estimado:
+                          </span>
+                          <span className="font-bold text-on-surface text-label-md">
+                            {formatCurrency(
+                              equivalentPreview,
+                              currency === 'USD' ? 'VES' : 'USD'
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 

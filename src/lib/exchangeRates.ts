@@ -1,5 +1,6 @@
 import type { Currency, ExchangeRateRecord, RateSource } from '@/types'
 
+const LOCAL_API_URL = '/api/bcv-rate'
 const BCV_API_URL = 'https://bcv.today/api/v1/rate.json'
 
 export interface BcvApiResponse {
@@ -11,6 +12,10 @@ export interface BcvApiResponse {
   effective_date?: string
   date?: string
   timestamp?: number
+  fetched_at?: string
+  provider?: string
+  precision?: number
+  error?: string
 }
 
 // Initial fallback seeds (November 2026 realistic BCV history)
@@ -64,7 +69,17 @@ export function parseRateValue(value: unknown): number | null {
     return value
   }
   if (typeof value === 'string') {
-    const cleaned = value.replace(/\./g, '').replace(',', '.').trim()
+    let cleaned = value.replace(/[^\d.,]/g, '').trim()
+    if (!cleaned) return null
+    const hasComma = cleaned.includes(',')
+    const hasDot = cleaned.includes('.')
+    if (hasComma && hasDot) {
+      const decimalSep = cleaned.lastIndexOf(',') > cleaned.lastIndexOf('.') ? ',' : '.'
+      const thousandSep = decimalSep === ',' ? '.' : ','
+      cleaned = cleaned.split(thousandSep).join('').replace(decimalSep, '.')
+    } else if (hasComma) {
+      cleaned = cleaned.replace(',', '.')
+    }
     const parsed = parseFloat(cleaned)
     if (!isNaN(parsed) && parsed > 0) return parsed
   }
@@ -90,30 +105,47 @@ export function calculateEquivalent(
  * Fetches the latest BCV official rate from the cached JSON API.
  * Never scrapes directly on the client. Returns structured records.
  */
+async function fetchRatePayload(): Promise<BcvApiResponse> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 7000)
+
+  try {
+    // Preferred path: our backend proxy (cached, no browser scraping).
+    try {
+      const local = await fetch(LOCAL_API_URL, {
+        signal: controller.signal,
+        headers: { Accept: 'application/json' },
+        cache: 'default',
+      })
+      if (local.ok) {
+        const payload: BcvApiResponse = await local.json()
+        if (payload && !payload.error) return payload
+      }
+    } catch {
+      // Fall through to the public cached JSON mirror.
+    }
+
+    const response = await fetch(BCV_API_URL, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+      cache: 'default',
+    })
+    if (!response.ok) {
+      throw new Error(`BCV API HTTP ${response.status}`)
+    }
+    return (await response.json()) as BcvApiResponse
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 export async function fetchLatestBcvRates(): Promise<{
   usdRecord: ExchangeRateRecord
   eurRecord?: ExchangeRateRecord
   raw: BcvApiResponse
 }> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 6000)
-
   try {
-    const response = await fetch(BCV_API_URL, {
-      signal: controller.signal,
-      headers: {
-        Accept: 'application/json',
-      },
-      cache: 'default',
-    })
-
-    clearTimeout(timeoutId)
-
-    if (!response.ok) {
-      throw new Error(`BCV API HTTP ${response.status}`)
-    }
-
-    const data: BcvApiResponse = await response.json()
+    const data = await fetchRatePayload()
     const nowIso = new Date().toISOString()
     const effectiveDate = data.effective_date || data.date || nowIso.split('T')[0]
 
@@ -145,7 +177,6 @@ export async function fetchLatestBcvRates(): Promise<{
 
     return { usdRecord, eurRecord, raw: data }
   } catch (err) {
-    clearTimeout(timeoutId)
     throw err
   }
 }

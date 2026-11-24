@@ -60,6 +60,8 @@ export interface Transaction {
   exchange_rate_source?: RateSource
   exchange_rate_date?: string // effective date of the rate (YYYY-MM-DD)
   equivalent_amount?: number // converted amount in opposite currency
+  time?: string | null // optional HH:mm, only when the user sets a time
+  account_id?: string | null // optional account selection
   created_at: string
   updated_at: string
 }
@@ -75,6 +77,8 @@ export interface CreateTransactionInput {
   exchange_rate_source?: RateSource
   exchange_rate_date?: string
   equivalent_amount?: number
+  time?: string | null
+  account_id?: string | null
 }
 
 // ----- Savings Goals -----

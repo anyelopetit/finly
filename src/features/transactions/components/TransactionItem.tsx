@@ -117,14 +117,19 @@ export function TransactionItem({ transaction, index = 0 }: TransactionItemProps
         </div>
       </div>
 
-      {/* Amount */}
+      {/* Amount & Equivalent */}
       <div className="text-right shrink-0 ml-2">
-        <p className={cn('text-label-lg', amountColor)}>
+        <p className={cn('text-label-lg leading-tight', amountColor)}>
           {isHidden
             ? '••••••'
             : `${amountPrefix}${formatCurrency(transaction.amount, transaction.currency)}`}
         </p>
-        <span className="text-label-sm text-on-surface-variant">
+        {!isHidden && transaction.equivalent_amount && (
+          <p className="text-[11px] text-on-surface-variant font-medium leading-tight mt-0.5">
+            ≈ {formatCurrency(transaction.equivalent_amount, transaction.currency === 'USD' ? 'VES' : 'USD')}
+          </p>
+        )}
+        <span className="text-[10px] uppercase font-semibold text-on-surface-variant/70">
           {transaction.currency}
         </span>
       </div>
