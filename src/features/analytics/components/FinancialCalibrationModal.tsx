@@ -104,7 +104,7 @@ export function FinancialCalibrationModal({ isOpen, onClose }: FinancialCalibrat
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -114,14 +114,14 @@ export function FinancialCalibrationModal({ isOpen, onClose }: FinancialCalibrat
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            exit={{ opacity: 0, scale: 0.95, y: 30 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg max-h-[92vh] flex flex-col bg-surface-container-lowest rounded-[28px] shadow-2xl z-10 overflow-hidden border border-hairline"
+            className="relative w-full max-w-lg h-[90vh] sm:h-auto sm:max-h-[88vh] flex flex-col bg-surface-container-lowest rounded-t-[32px] sm:rounded-[28px] shadow-2xl z-10 overflow-hidden border border-hairline"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-hairline bg-surface-container-low/40">
+            <div className="flex-shrink-0 px-6 py-4 border-b border-hairline bg-surface-container-low/40">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="p-1.5 rounded-lg bg-primary-fixed/40 text-primary">
@@ -202,6 +202,12 @@ export function FinancialCalibrationModal({ isOpen, onClose }: FinancialCalibrat
                           step="any"
                           value={income}
                           onChange={(e) => setIncome(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleNext()
+                            }
+                          }}
                           placeholder="850.00"
                           className="w-full pl-10 pr-4 py-3 rounded-2xl bg-surface-container-low border border-hairline text-headline-sm font-bold text-on-surface focus:outline-none focus:border-primary font-numeric"
                         />
@@ -278,6 +284,12 @@ export function FinancialCalibrationModal({ isOpen, onClose }: FinancialCalibrat
                           step="any"
                           value={fixedExpenses}
                           onChange={(e) => setFixedExpenses(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleNext()
+                            }
+                          }}
                           placeholder="350.00"
                           className="w-full pl-10 pr-4 py-3 rounded-2xl bg-surface-container-low border border-hairline text-headline-sm font-bold text-on-surface focus:outline-none focus:border-primary font-numeric"
                         />
@@ -390,38 +402,44 @@ export function FinancialCalibrationModal({ isOpen, onClose }: FinancialCalibrat
               </div>
             </div>
 
-            {/* Footer controls */}
-            <div className="px-6 py-4 border-t border-hairline bg-surface-container-low/40 flex items-center justify-between">
+            {/* Footer controls — Fixed at bottom with high z-index and elevation */}
+            <div className="flex-shrink-0 px-6 py-4 border-t border-hairline bg-surface-container-lowest flex items-center justify-between gap-3 shadow-lg z-30 pb-safe sm:pb-4">
               {step > 1 ? (
                 <button
                   type="button"
                   onClick={handlePrev}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-label-md font-semibold text-on-surface-variant hover:bg-surface-container transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-label-md font-semibold text-on-surface-variant hover:bg-surface-container transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Anterior
                 </button>
               ) : (
-                <div />
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2.5 rounded-xl text-label-md font-semibold text-on-surface-variant hover:bg-surface-container transition-colors"
+                >
+                  Omitir por ahora
+                </button>
               )}
 
               {step < 3 ? (
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-primary text-white text-label-md font-bold shadow-md hover:bg-primary/90 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-label-md font-bold shadow-md hover:bg-primary/90 transition-all flex-1 sm:flex-initial"
                 >
-                  Continuar
+                  <span>Continuar</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-primary text-white text-label-md font-bold shadow-md hover:bg-primary/90 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-label-md font-bold shadow-md hover:bg-primary/90 transition-all flex-1 sm:flex-initial"
                 >
                   <Check className="h-4 w-4" />
-                  Guardar Diagnóstico
+                  <span>Guardar Diagnóstico</span>
                 </button>
               )}
             </div>
