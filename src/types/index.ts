@@ -16,30 +16,178 @@ export interface Category {
   icon: string
   color: string
   group: CategoryGroup
+  type?: CategoryGroup
   user_id: string | null // null = default system category
+  budget_limit?: number | null
+  subcategories?: string[]
+  tags?: string[]
   created_at: string
+}
+
+export interface CreateCategoryInput {
+  name: string
+  icon: string
+  color: string
+  group?: CategoryGroup
+  type?: CategoryGroup
+  budget_limit?: number | null
+  subcategories?: string[]
+  tags?: string[]
 }
 
 export const DEFAULT_CATEGORIES: Omit<Category, 'id' | 'user_id' | 'created_at'>[] = [
   // Income categories
-  { name: 'Salario', icon: 'payments', color: '#4d6700', group: 'income' },
-  { name: 'Independiente', icon: 'work', color: '#4d6700', group: 'income' },
-  { name: 'Negocio', icon: 'storefront', color: '#4d6700', group: 'income' },
-  { name: 'Otros ingresos', icon: 'add_circle', color: '#4d6700', group: 'income' },
+  {
+    name: 'Salario',
+    icon: 'payments',
+    color: '#4d6700',
+    group: 'income',
+    subcategories: ['Quincena', 'Bono', 'Liquidación'],
+  },
+  {
+    name: 'Independiente',
+    icon: 'work',
+    color: '#4d6700',
+    group: 'income',
+    subcategories: ['Freelance', 'Consultoría', 'Honorarios'],
+  },
+  {
+    name: 'Negocio',
+    icon: 'storefront',
+    color: '#4d6700',
+    group: 'income',
+    subcategories: ['Ventas', 'Comisiones', 'Servicios'],
+  },
+  {
+    name: 'Otros ingresos',
+    icon: 'add_circle',
+    color: '#4d6700',
+    group: 'income',
+    subcategories: ['Remesas', 'Regalos', 'Intereses'],
+  },
   // Expense categories
-  { name: 'Alimentación', icon: 'restaurant', color: '#ba1a1a', group: 'expense' },
-  { name: 'Transporte', icon: 'directions_car', color: '#7653c8', group: 'expense' },
-  { name: 'Vivienda', icon: 'home', color: '#574397', group: 'expense' },
-  { name: 'Servicios', icon: 'bolt', color: '#7653c8', group: 'expense' },
-  { name: 'Salud', icon: 'favorite', color: '#ba1a1a', group: 'expense' },
-  { name: 'Entretenimiento', icon: 'sports_esports', color: '#5d39ae', group: 'expense' },
-  { name: 'Compras', icon: 'shopping_bag', color: '#7653c8', group: 'expense' },
-  { name: 'Educación', icon: 'school', color: '#574397', group: 'expense' },
-  { name: 'Deudas', icon: 'account_balance', color: '#ba1a1a', group: 'expense' },
-  { name: 'Cafeterías', icon: 'local_cafe', color: '#7653c8', group: 'expense' },
-  { name: 'Comida a domicilio', icon: 'delivery_dining', color: '#ba1a1a', group: 'expense' },
-  { name: 'Otros gastos', icon: 'more_horiz', color: '#494452', group: 'expense' },
+  {
+    name: 'Alimentación',
+    icon: 'restaurant',
+    color: '#ba1a1a',
+    group: 'expense',
+    subcategories: ['Supermercado', 'Carnicería', 'Frutas y Verduras', 'Panadería'],
+  },
+  {
+    name: 'Transporte',
+    icon: 'directions_car',
+    color: '#7653c8',
+    group: 'expense',
+    subcategories: ['Gasolina', 'Mantenimiento', 'Taxi/Yummy/Ridery', 'Repuestos'],
+  },
+  {
+    name: 'Vivienda',
+    icon: 'home',
+    color: '#574397',
+    group: 'expense',
+    subcategories: ['Alquiler', 'Condominio', 'Reparaciones'],
+  },
+  {
+    name: 'Servicios',
+    icon: 'bolt',
+    color: '#7653c8',
+    group: 'expense',
+    subcategories: ['Internet Fibra', 'Luz / Corpoelec', 'Agua', 'Telefonía'],
+  },
+  {
+    name: 'Salud',
+    icon: 'favorite',
+    color: '#ba1a1a',
+    group: 'expense',
+    subcategories: ['Farmacia', 'Consultas', 'Seguro / Emergencias'],
+  },
+  {
+    name: 'Entretenimiento',
+    icon: 'sports_esports',
+    color: '#5d39ae',
+    group: 'expense',
+    subcategories: ['Streaming', 'Cine', 'Juegos', 'Salidas'],
+  },
+  {
+    name: 'Compras',
+    icon: 'shopping_bag',
+    color: '#7653c8',
+    group: 'expense',
+    subcategories: ['Ropa', 'Electrónica', 'Hogar'],
+  },
+  {
+    name: 'Educación',
+    icon: 'school',
+    color: '#574397',
+    group: 'expense',
+    subcategories: ['Cursos', 'Libros', 'Colegiatura'],
+  },
+  {
+    name: 'Deudas',
+    icon: 'account_balance',
+    color: '#ba1a1a',
+    group: 'expense',
+    subcategories: ['Tarjetas', 'Préstamos familiares', 'Cuotas'],
+  },
+  {
+    name: 'Cafeterías',
+    icon: 'local_cafe',
+    color: '#7653c8',
+    group: 'expense',
+    subcategories: ['Café diario', 'Meriendas', 'Pan'],
+  },
+  {
+    name: 'Comida a domicilio',
+    icon: 'delivery_dining',
+    color: '#ba1a1a',
+    group: 'expense',
+    subcategories: ['Almuerzo trabajo', 'Cena fin de semana', 'Antojos'],
+  },
+  {
+    name: 'Otros gastos',
+    icon: 'more_horiz',
+    color: '#494452',
+    group: 'expense',
+    subcategories: ['Imprevistos', 'Donaciones', 'Trámites'],
+  },
 ]
+
+// ----- Accounts -----
+
+export type AccountType =
+  | 'cash'
+  | 'bank_ve'
+  | 'bank_us'
+  | 'p2p_crypto'
+  | 'digital_wallet'
+  | 'other'
+
+export interface Account {
+  id: string
+  user_id: string
+  name: string
+  type: AccountType
+  provider: string // e.g. 'Binance', 'Zelle', 'Banesco', 'BDV', 'Mercantil', 'Bancamiga', 'Provincial', 'PayPal', 'Zinli', 'Ubii', 'Wally', 'Efectivo USD', 'Efectivo VES'
+  currency: Currency // 'USD' | 'VES'
+  initial_balance: number
+  color: string
+  icon: string
+  account_number?: string | null
+  is_archived?: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateAccountInput {
+  name: string
+  type: AccountType
+  provider: string
+  currency: Currency
+  initial_balance: number
+  account_number?: string | null
+  color?: string
+  icon?: string
+}
 
 // ----- Transactions -----
 
@@ -62,6 +210,8 @@ export interface Transaction {
   equivalent_amount?: number // converted amount in opposite currency
   time?: string | null // optional HH:mm, only when the user sets a time
   account_id?: string | null // optional account selection
+  subcategory?: string | null
+  tags?: string[]
   created_at: string
   updated_at: string
 }
@@ -79,6 +229,8 @@ export interface CreateTransactionInput {
   equivalent_amount?: number
   time?: string | null
   account_id?: string | null
+  subcategory?: string
+  tags?: string[]
 }
 
 // ----- Savings Goals -----

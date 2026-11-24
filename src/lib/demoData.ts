@@ -1,5 +1,8 @@
-import type { Category, Debt, Goal, Profile, Transaction } from '@/types'
+import type { Account, Category, Debt, Goal, Profile, Transaction } from '@/types'
 import { DEFAULT_CATEGORIES } from '@/types'
+import { DEFAULT_ACCOUNTS } from '@/lib/accounts'
+
+export const DEMO_ACCOUNTS: Account[] = DEFAULT_ACCOUNTS
 
 export const DEMO_PROFILE: Profile = {
   id: 'user-demo-1',

@@ -170,3 +170,5 @@ export const useUIStore = create<UIState>()((set) => ({
   lastCreatedTransactionId: null,
   setLastCreatedTransactionId: (lastCreatedTransactionId) => set({ lastCreatedTransactionId }),
 }))
+
+export { useDataStore } from './dataStore'

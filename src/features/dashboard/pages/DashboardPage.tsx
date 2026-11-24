@@ -4,6 +4,7 @@ import { usePrivacyStore, useUIStore } from '@/store'
 import { useDashboard } from '../hooks/useDashboard'
 import { HeroBalanceCard } from '../components/HeroBalanceCard'
 import { SpendingBars } from '../components/SpendingBars'
+import { AccountsCarouselCard } from '@/features/accounts/components/AccountsCarouselCard'
 import { FinancialSummaryPills } from '../components/FinancialSummaryPills'
 import { TransactionItem } from '@/features/transactions'
 import { GoalCard } from '@/features/savings'
@@ -99,7 +100,10 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 5. Smart insight */}
+      {/* 5. Accounts overview */}
+      <AccountsCarouselCard />
+
+      {/* 6. Smart insight */}
       {insights.length > 0 ? (
         <InsightCard insight={insights[0]} />
       ) : (
