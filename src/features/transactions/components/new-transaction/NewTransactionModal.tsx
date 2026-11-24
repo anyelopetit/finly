@@ -556,19 +556,19 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                     'relative z-10 h-9 rounded-full text-[13px] font-bold tracking-[-0.01em] transition-colors duration-150',
                     active
                       ? isExpense
-                        ? 'text-white'
-                        : 'text-on-secondary-fixed'
-                      : 'text-on-surface-variant hover:text-on-surface'
+                        ? 'text-error'
+                        : 'text-secondary'
+                      : 'text-on-surface-variant/80 hover:text-on-surface'
                   )}
                 >
                   {active && (
                     <motion.span
                       layoutId="movement-type-pill"
                       className={cn(
-                        'absolute inset-0 rounded-full',
+                        'absolute inset-0 rounded-full border shadow-xs',
                         isExpense
-                          ? 'bg-error shadow-[0_4px_12px_-4px_rgba(186,26,26,0.6)]'
-                          : 'bg-secondary-fixed shadow-[0_4px_12px_-4px_rgba(168,222,30,0.8)]'
+                          ? 'border-error/20 bg-error-container/60'
+                          : 'border-secondary/20 bg-secondary-container/40'
                       )}
                       transition={
                         reducedMotion
