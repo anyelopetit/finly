@@ -61,7 +61,7 @@ export function RateEditor({
           className={cn(
             'rounded-full px-2 py-1 text-[11px] font-medium transition-colors',
             isCustom
-              ? 'text-ink/70 hover:bg-mist'
+              ? 'text-primary font-semibold hover:bg-primary-fixed/30'
               : 'cursor-default text-muted/35'
           )}
         >
@@ -71,11 +71,11 @@ export function RateEditor({
 
       <div
         className={cn(
-          'mt-2.5 flex items-center gap-2 rounded-[14px] border bg-mist/60 px-3 py-2.5 transition-colors',
-          valid ? 'border-transparent' : 'border-danger/40'
+          'mt-2.5 flex items-center gap-2 rounded-[14px] border bg-surface-container-low px-3 py-2.5 transition-colors',
+          valid ? 'border-transparent' : 'border-error/40'
         )}
       >
-        <span className="shrink-0 text-[12px] font-medium text-muted">1 USD =</span>
+        <span className="shrink-0 text-[12px] font-medium text-on-surface-variant">1 USD =</span>
         <input
           autoFocus
           inputMode="decimal"
@@ -89,13 +89,13 @@ export function RateEditor({
           }}
           onFocus={(event) => event.currentTarget.select()}
           aria-label="Tasa BCV: bolívares por dólar"
-          className="w-full min-w-0 bg-transparent text-[19px] font-semibold tracking-[-0.01em] text-ink outline-none tnum"
+          className="w-full min-w-0 bg-transparent text-[19px] font-semibold tracking-[-0.01em] text-on-surface outline-none tnum"
         />
-        <span className="shrink-0 text-[12px] font-medium text-muted">VES</span>
+        <span className="shrink-0 text-[12px] font-medium text-on-surface-variant">VES</span>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="text-[10.5px] leading-4 text-muted/80">
+        <p className="text-[10.5px] leading-4 text-on-surface-variant/80">
           No modifica la tasa global de Finly.
         </p>
         <button
@@ -103,10 +103,10 @@ export function RateEditor({
           onClick={apply}
           disabled={!valid}
           className={cn(
-            'shrink-0 rounded-full px-3.5 py-1.5 text-[11.5px] font-semibold transition-all',
+            'shrink-0 rounded-full px-3.5 py-1.5 text-[11.5px] font-bold transition-all',
             valid
-              ? 'bg-ink text-white hover:bg-ink/90 active:scale-95'
-              : 'cursor-not-allowed bg-mist text-muted/50'
+              ? 'bg-secondary-fixed text-on-secondary-fixed shadow-sm hover:bg-[#D2FF62] active:scale-95'
+              : 'cursor-not-allowed bg-surface-container-low text-on-surface-variant/40'
           )}
         >
           Aplicar

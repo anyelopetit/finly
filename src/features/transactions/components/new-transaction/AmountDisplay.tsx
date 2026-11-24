@@ -49,10 +49,10 @@ export function AmountDisplay({
     : { duration: 0.19, ease: [0.32, 0.72, 0, 1] as const }
 
   return (
-    <div className="pt-5">
+    <div className="pt-3.5">
       {/* Currency — a single tap switches it */}
       <div
-        className="relative mx-auto grid w-[112px] grid-cols-2 rounded-full bg-mist p-1"
+        className="relative mx-auto grid w-[112px] grid-cols-2 rounded-full bg-surface-container-low p-1"
         role="group"
         aria-label="Moneda del movimiento"
       >
@@ -65,14 +65,14 @@ export function AmountDisplay({
               aria-pressed={active}
               onClick={() => onCurrencyChange(option)}
               className={cn(
-                'relative z-10 rounded-full py-1 text-[11px] font-semibold tracking-[0.08em] transition-colors duration-150',
-                active ? 'text-ink' : 'text-muted hover:text-ink/70'
+                'relative z-10 rounded-full py-1 text-[11px] font-bold tracking-[0.08em] transition-colors duration-150',
+                active ? 'text-white' : 'text-on-surface-variant hover:text-on-surface'
               )}
             >
               {active && (
                 <motion.span
                   layoutId="movement-currency-pill"
-                  className="absolute inset-0 rounded-full bg-white shadow-key"
+                  className="absolute inset-0 rounded-full bg-primary shadow-sm"
                   transition={
                     reducedMotion
                       ? { duration: 0 }
@@ -87,7 +87,7 @@ export function AmountDisplay({
       </div>
 
       {/* Live expression (kept in flow to avoid jumps) */}
-      <div className="mt-2 flex h-[18px] items-center justify-center overflow-hidden">
+      <div className="mt-1.5 flex h-4 items-center justify-center overflow-hidden">
         <AnimatePresence initial={false} mode="popLayout">
           {tokens.length > 0 && (
             <motion.p
@@ -124,16 +124,16 @@ export function AmountDisplay({
           transition={reducedMotion ? { duration: 0 } : { duration: 0.16, ease: [0.32, 0.72, 0, 1] }}
           className={cn(
             'tnum inline-flex items-baseline justify-center pb-1 font-semibold leading-[1.06] tracking-[-0.045em]',
-            empty ? 'text-ink/35' : 'text-ink'
+            empty ? 'text-ink/55' : 'text-ink'
           )}
           style={{ fontSize: `${fontSize}px` }}
         >
           <span>{parts.integer}</span>
-          <span className={empty ? 'text-ink/20' : 'text-muted/70'}> ,</span>
+          <span className={empty ? 'text-ink/30' : 'text-muted/70'}>,</span>
           <span
             className={cn(
               empty
-                ? 'text-ink/20'
+                ? 'text-ink/30'
                 : parts.hasFraction || editing
                   ? 'text-ink'
                   : 'text-muted/55'
@@ -146,7 +146,7 @@ export function AmountDisplay({
       </button>
 
       {/* Conversion — moves in the same direction as the currency */}
-      <div className="mt-2 flex h-[24px] items-center justify-center overflow-hidden">
+      <div className="mt-1.5 flex h-[22px] items-center justify-center overflow-hidden">
         <AnimatePresence initial={false} mode="popLayout" custom={direction}>
           <motion.p
             key={currency}

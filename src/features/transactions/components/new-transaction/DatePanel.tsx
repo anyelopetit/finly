@@ -102,22 +102,22 @@ export function DatePanel({ date, time, onDate, onTime, onClose }: DatePanelProp
               }}
               className={cn(
                 'relative mx-auto grid h-9 w-9 place-items-center rounded-full text-[12.5px] font-medium transition-colors duration-100',
-                isSelected && 'bg-ink font-semibold text-white',
-                !isSelected && outside && 'text-muted/35 hover:bg-mist/70',
-                !isSelected && !outside && 'text-ink/80 hover:bg-mist',
-                !isSelected && today && 'font-semibold text-ink'
+                isSelected && 'bg-primary font-bold text-white shadow-sm',
+                !isSelected && outside && 'text-on-surface-variant/40 hover:bg-surface-container-low',
+                !isSelected && !outside && 'text-on-surface hover:bg-surface-container-low',
+                !isSelected && today && 'font-bold text-primary'
               )}
             >
               {format(day, 'd')}
               {today && !isSelected && (
-                <span className="absolute bottom-[3px] h-1 w-1 rounded-full bg-accent-deep" />
+                <span className="absolute bottom-[3px] h-1 w-1 rounded-full bg-primary" />
               )}
             </button>
           )
         })}
       </div>
 
-      <div className="mt-2 flex items-center gap-1.5 border-t border-hairline/80 pt-2.5">
+      <div className="mt-2 flex items-center gap-1.5 border-t border-outline-variant/30 pt-2.5">
         <button
           type="button"
           onClick={() => {
@@ -125,7 +125,7 @@ export function DatePanel({ date, time, onDate, onTime, onClose }: DatePanelProp
             onDate(format(today, 'yyyy-MM-dd'))
             setView(startOfMonth(today))
           }}
-          className="rounded-full bg-mist px-2.5 py-1 text-[11px] font-medium text-ink/70 hover:bg-lav-soft"
+          className="rounded-full bg-surface-container-low px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
         >
           Hoy
         </button>
@@ -136,27 +136,27 @@ export function DatePanel({ date, time, onDate, onTime, onClose }: DatePanelProp
             onDate(format(yesterday, 'yyyy-MM-dd'))
             setView(startOfMonth(yesterday))
           }}
-          className="rounded-full bg-mist px-2.5 py-1 text-[11px] font-medium text-ink/70 hover:bg-lav-soft"
+          className="rounded-full bg-surface-container-low px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
         >
           Ayer
         </button>
 
         <div className="ml-auto flex items-center gap-1.5">
           {timeEnabled ? (
-            <div className="flex items-center gap-1 rounded-full bg-mist pl-2 pr-1">
-              <Clock3 className="h-3 w-3 text-muted" />
+            <div className="flex items-center gap-1 rounded-full bg-surface-container-low pl-2 pr-1">
+              <Clock3 className="h-3 w-3 text-on-surface-variant" />
               <input
                 type="time"
                 value={time ?? ''}
                 onChange={(event) => onTime(event.target.value || null)}
                 aria-label="Hora del movimiento"
-                className="w-[72px] bg-transparent py-1 text-[11.5px] font-medium text-ink outline-none tnum"
+                className="w-[72px] bg-transparent py-1 text-[11.5px] font-medium text-on-surface outline-none tnum"
               />
               <button
                 type="button"
                 onClick={toggleTime}
                 aria-label="Quitar hora"
-                className="grid h-5 w-5 place-items-center rounded-full text-muted hover:bg-white hover:text-ink"
+                className="grid h-5 w-5 place-items-center rounded-full text-on-surface-variant hover:bg-white hover:text-on-surface"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -165,7 +165,7 @@ export function DatePanel({ date, time, onDate, onTime, onClose }: DatePanelProp
             <button
               type="button"
               onClick={toggleTime}
-              className="flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted hover:bg-mist hover:text-ink"
+              className="flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
             >
               <Clock3 className="h-3 w-3" />
               Añadir hora
@@ -174,7 +174,7 @@ export function DatePanel({ date, time, onDate, onTime, onClose }: DatePanelProp
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-ink px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-ink/90"
+            className="rounded-full bg-secondary-fixed text-on-secondary-fixed px-3.5 py-1.5 text-[11px] font-bold shadow-sm hover:bg-[#D2FF62]"
           >
             Listo
           </button>

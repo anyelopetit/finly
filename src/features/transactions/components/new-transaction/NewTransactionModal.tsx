@@ -79,6 +79,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
     activeCurrency,
     exchangeRate,
     effectiveDate,
+    source,
     isStale,
     isLoadingRates,
     syncRates,
@@ -329,12 +330,12 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
       setPanel(null)
       setDetailsOpen(true)
       setCategoryError('Elige una categoría para guardar')
-      requestAnimationFrame(() =>
+      window.setTimeout(() => {
         detailsRef.current?.scrollIntoView({
           block: 'center',
           behavior: reducedMotion ? 'auto' : 'smooth',
         })
-      )
+      }, reducedMotion ? 0 : 90)
       return
     }
 
@@ -349,7 +350,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
       time: time || null,
       account_id: accountId,
       exchange_rate: roundToMicro(rate),
-      exchange_rate_source: customRate ? 'MANUAL' : 'BCV',
+      exchange_rate_source: customRate ? 'MANUAL' : source,
       exchange_rate_date: effectiveDate,
       equivalent_amount: equivalentValue,
     })
@@ -442,16 +443,17 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener('keydown', listener)
   }, [])
 
-  useEffect(() => {
-    if (!editing) return
-    const frame = requestAnimationFrame(() => {
-      keypadRef.current?.scrollIntoView({
-        block: 'nearest',
-        behavior: reducedMotion ? 'auto' : 'smooth',
-      })
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [editing, reducedMotion])
+  const revealKeypad = () => {
+    const body = bodyRef.current
+    const keypad = keypadRef.current
+    if (!body || !keypad) return
+    const bodyRect = body.getBoundingClientRect()
+    const keypadRect = keypad.getBoundingClientRect()
+    const overflow = keypadRect.bottom - bodyRect.bottom + 10
+    if (overflow > 0) {
+      body.scrollBy({ top: overflow, behavior: reducedMotion ? 'auto' : 'smooth' })
+    }
+  }
 
   const dateLabel = useMemo(() => {
     const base = isDateToday(date)
@@ -494,7 +496,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
         exit={isDesktop ? { opacity: 0, scale: 0.985, y: 10 } : { y: '100%' }}
         transition={sheetTransition}
         className="relative z-10 flex w-full flex-col overflow-hidden rounded-t-[30px] bg-white shadow-sheet outline-none sm:max-w-[472px] sm:rounded-[30px]"
-        style={{ maxHeight: isDesktop ? 'min(88vh, 880px)' : 'min(92dvh, 900px)' }}
+        style={{ maxHeight: isDesktop ? 'min(94vh, 900px)' : 'min(92dvh, 900px)' }}
       >
         <div className="pt-2.5 sm:hidden">
           <div className="sheet-grabber mx-auto" />
@@ -531,7 +533,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
         >
           {/* Gasto / Ingreso */}
           <div
-            className="relative grid grid-cols-2 rounded-full bg-mist p-1"
+            className="relative grid grid-cols-2 rounded-full bg-surface-container-low p-1"
             role="tablist"
             aria-label="Tipo de movimiento"
           >
@@ -542,6 +544,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
               ] as const
             ).map(([value, label]) => {
               const active = type === value
+              const isExpense = value === 'expense'
               return (
                 <button
                   key={value}
@@ -550,14 +553,23 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                   aria-selected={active}
                   onClick={() => changeType(value)}
                   className={cn(
-                    'relative z-10 h-9 rounded-full text-[13px] font-semibold tracking-[-0.01em] transition-colors duration-150',
-                    active ? 'text-ink' : 'text-muted hover:text-ink/70'
+                    'relative z-10 h-9 rounded-full text-[13px] font-bold tracking-[-0.01em] transition-colors duration-150',
+                    active
+                      ? isExpense
+                        ? 'text-white'
+                        : 'text-on-secondary-fixed'
+                      : 'text-on-surface-variant hover:text-on-surface'
                   )}
                 >
                   {active && (
                     <motion.span
                       layoutId="movement-type-pill"
-                      className="absolute inset-0 rounded-full bg-accent shadow-[0_4px_12px_-6px_rgba(168,222,30,0.9)]"
+                      className={cn(
+                        'absolute inset-0 rounded-full',
+                        isExpense
+                          ? 'bg-error shadow-[0_4px_12px_-4px_rgba(186,26,26,0.6)]'
+                          : 'bg-secondary-fixed shadow-[0_4px_12px_-4px_rgba(168,222,30,0.8)]'
+                      )}
                       transition={
                         reducedMotion
                           ? { duration: 0 }
@@ -599,7 +611,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
           </AnimatePresence>
 
           {/* BCV rate — secondary, editable only for this movement */}
-          <div className="mt-2.5 flex h-6 items-center justify-center">
+          <div className="mt-1.5 flex h-5 items-center justify-center">
             <button
               type="button"
               onClick={() => setPanel(panel === 'rate' ? null : 'rate')}
@@ -620,7 +632,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                       : 'bg-accent-deep'
                 )}
               />
-              <span>{customRate ? 'Tasa' : 'BCV'}:</span>
+              <span>{customRate || source === 'MANUAL' ? 'Tasa' : 'BCV'}:</span>
               <span>
                 1 USD = <span className="tnum text-ink/60">{formatRate(rate)}</span> VES
               </span>
@@ -653,6 +665,18 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
             )}
           </AnimatePresence>
 
+          {/* Account, date and optional details collapse into "focus mode" while
+              the calculator is open, so the amount + keypad always fit together. */}
+          <AnimatePresence initial={false}>
+            {!editing && (
+              <motion.div
+                key="secondary-controls"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={expandTransition}
+                className="overflow-hidden"
+              >
           {/* Account + date */}
           <div className="mt-3.5 flex items-center justify-between gap-2">
             <button
@@ -796,6 +820,9 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
               </motion.div>
             )}
           </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence initial={false}>
             {editing && (
@@ -806,6 +833,9 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={expandTransition}
+                onAnimationComplete={() => {
+                  if (editing) revealKeypad()
+                }}
                 className="overflow-hidden"
               >
                 <Keypad
@@ -825,7 +855,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
 
         <footer
           className="shrink-0 bg-white px-5 pt-2"
-          style={{ paddingBottom: 'max(14px, env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
         >
           <motion.button
             type="button"
@@ -835,9 +865,9 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
             transition={{ type: 'spring', stiffness: 520, damping: 34 }}
             className={cn(
               'relative flex h-[56px] w-full items-center justify-center gap-2 overflow-hidden rounded-[20px]',
-              'bg-accent text-[15px] font-semibold tracking-[-0.01em] text-ink',
-              'shadow-[0_14px_30px_-16px_rgba(168,222,30,1),inset_0_1px_0_rgba(255,255,255,0.45)]',
-              'transition-colors duration-200 hover:bg-[#D2FF62] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
+              'bg-secondary-fixed text-[15px] font-bold tracking-[-0.01em] text-on-secondary-fixed',
+              'shadow-fab glow-lime',
+              'transition-colors duration-200 hover:bg-[#D2FF62] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-fixed focus-visible:ring-offset-2',
               saved && 'pointer-events-none'
             )}
           >

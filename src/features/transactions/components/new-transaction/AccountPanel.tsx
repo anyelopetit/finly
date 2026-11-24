@@ -36,19 +36,19 @@ export function AccountPanel({ accounts, selectedId, onSelect, onClose }: Accoun
               onClick={() => onSelect(account)}
               className={cn(
                 'flex w-full items-center gap-2.5 rounded-[12px] px-2.5 py-2 text-left transition-colors',
-                selected ? 'bg-mist' : 'hover:bg-mist/70'
+                selected ? 'bg-primary-fixed/30 text-primary font-semibold' : 'text-on-surface hover:bg-surface-container-low'
               )}
             >
               <span
                 className={cn(
                   'grid h-7 w-7 place-items-center rounded-full',
-                  selected ? 'bg-accent text-ink' : 'bg-mist text-muted'
+                  selected ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant'
                 )}
               >
                 <Icon className="h-3.5 w-3.5" strokeWidth={2} />
               </span>
-              <span className="flex-1 text-[13px] font-medium text-ink">{account.name}</span>
-              {selected && <Check className="h-3.5 w-3.5 text-ink/70" strokeWidth={2.5} />}
+              <span className="flex-1 text-[13px] font-medium">{account.name}</span>
+              {selected && <Check className="h-3.5 w-3.5 text-primary" strokeWidth={2.5} />}
             </button>
           )
         })}

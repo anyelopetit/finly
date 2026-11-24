@@ -29,14 +29,14 @@ function Key({ children, label, onClick, tone = 'digit', className }: KeyProps) 
       whileTap={{ scale: 0.955 }}
       transition={{ type: 'spring', stiffness: 650, damping: 40 }}
       className={cn(
-        'flex h-[52px] select-none touch-manipulation items-center justify-center rounded-[15px] text-[21px] font-medium leading-none outline-none',
+        'flex h-[46px] select-none touch-manipulation items-center justify-center rounded-[13px] text-[20px] font-medium leading-none outline-none',
         'transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-lav/70',
         '[-webkit-tap-highlight-color:transparent]',
-        tone === 'digit' && 'bg-white text-ink shadow-key hover:bg-lav-tint',
-        tone === 'operator' && 'bg-[#EDE8FF] text-ink hover:bg-[#E5DEFF]',
-        tone === 'utility' && 'bg-mist/80 text-muted hover:bg-mist',
+        tone === 'digit' && 'bg-white text-on-surface shadow-key hover:bg-surface-container-low',
+        tone === 'operator' && 'bg-primary-fixed/40 text-primary font-bold hover:bg-primary-fixed/70',
+        tone === 'utility' && 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
         tone === 'equals' &&
-          'bg-accent text-ink shadow-[0_8px_20px_-10px_rgba(168,222,30,0.95)] hover:bg-[#D2FF62]',
+          'bg-secondary-fixed text-on-secondary-fixed font-bold shadow-fab glow-lime hover:bg-[#D2FF62]',
         className
       )}
     >
@@ -55,7 +55,7 @@ export function Keypad({
 }: KeypadProps) {
   return (
     <div
-      className="mt-4 grid grid-cols-4 grid-rows-5 gap-2 rounded-[24px] bg-[#F7F6FF] p-2.5"
+      className="mt-2.5 grid grid-cols-4 grid-rows-5 gap-[5px] rounded-[20px] bg-[#F7F6FF] p-1.5"
       role="group"
       aria-label="Teclado numérico"
     >

@@ -75,14 +75,14 @@ export function DetailsSection({
               className={cn(
                 'flex h-9 shrink-0 items-center gap-1.5 rounded-full border pl-1.5 pr-3 text-[12.5px] font-medium transition-colors duration-150',
                 selected
-                  ? 'border-accent bg-accent text-ink'
-                  : 'border-hairline bg-white text-ink/70 hover:border-lav/60 hover:bg-lav-tint'
+                  ? 'border-primary bg-primary-fixed/40 text-primary font-bold shadow-sm'
+                  : 'border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant hover:border-primary/40 hover:bg-surface-container-low'
               )}
             >
               <span
                 className={cn(
                   'grid h-6 w-6 place-items-center rounded-full',
-                  selected ? 'bg-ink/10 text-ink' : 'bg-mist text-muted'
+                  selected ? 'bg-primary text-white' : 'bg-surface-container text-on-surface-variant'
                 )}
               >
                 <CategoryIcon
