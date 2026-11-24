@@ -234,6 +234,12 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
     return evaluateExpression(cleaned)
   }
 
+  const hasEnteredAmount = useMemo(() => {
+    if (tokens.length > 0) return true
+    const parsed = parseRawAmount(entry)
+    return !isNaN(parsed) && parsed > 0
+  }, [entry, tokens])
+
   const pressEquals = () => {
     const result = resolveExpression()
     if ('error' in result) {
@@ -883,6 +889,16 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                 >
                   <Check className="h-[18px] w-[18px]" strokeWidth={2.6} />
                   {type === 'expense' ? 'Gasto guardado' : 'Ingreso guardado'}
+                </motion.span>
+              ) : hasEnteredAmount && !categoryId ? (
+                <motion.span
+                  key="select-category"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: reducedMotion ? 0 : 0.18 }}
+                >
+                  Seleccionar categoría
                 </motion.span>
               ) : (
                 <motion.span
