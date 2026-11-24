@@ -43,6 +43,8 @@ export const DEFAULT_CATEGORIES: Omit<Category, 'id' | 'user_id' | 'created_at'>
 
 // ----- Transactions -----
 
+export type RateSource = 'BCV' | 'BINANCE_P2P' | 'BANCO' | 'MANUAL'
+
 export interface Transaction {
   id: string
   user_id: string
@@ -53,6 +55,11 @@ export interface Transaction {
   category?: Category
   description: string | null
   date: string // ISO date string YYYY-MM-DD
+  // Exchange rate snapshot at movement creation
+  exchange_rate?: number // e.g. 919.8227 (VES per 1 USD)
+  exchange_rate_source?: RateSource
+  exchange_rate_date?: string // effective date of the rate (YYYY-MM-DD)
+  equivalent_amount?: number // converted amount in opposite currency
   created_at: string
   updated_at: string
 }
@@ -64,6 +71,10 @@ export interface CreateTransactionInput {
   category_id: string
   description?: string
   date: string
+  exchange_rate?: number
+  exchange_rate_source?: RateSource
+  exchange_rate_date?: string
+  equivalent_amount?: number
 }
 
 // ----- Savings Goals -----
@@ -136,12 +147,24 @@ export interface CreateDebtInput {
 
 // ----- Exchange Rates -----
 
+export interface ExchangeRateRecord {
+  id: string
+  source: RateSource
+  currency: 'USD' | 'EUR' | 'USDT' | 'CNY'
+  price: number // VES per unit (e.g. 919.8227)
+  bid?: number // only P2P
+  ask?: number // only P2P
+  effective_date: string // YYYY-MM-DD
+  fetched_at: string // ISO timestamp
+  is_stale?: boolean
+}
+
 export interface ExchangeRate {
   id: string
   from_currency: Currency
   to_currency: Currency
-  rate: number // e.g. 37.00 means 1 USD = 37 VES
-  source: string
+  rate: number // e.g. 919.82 means 1 USD = 919.82 VES
+  source: RateSource | string
   date: string
   created_at: string
 }
