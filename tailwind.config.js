@@ -68,6 +68,19 @@ export default {
         // Outline
         'outline': '#7a7484',
         'outline-variant': '#cbc3d4',
+
+        // ---- Finly 2026 tokens (income/expense sheet) ----
+        'ink': '#0B1B2B',
+        'accent': '#C8FF3D',
+        'accent-soft': '#EEFFC2',
+        'accent-deep': '#A8DE1E',
+        'lav': '#B9A4FF',
+        'lav-soft': '#EFEAFF',
+        'lav-tint': '#F8F6FF',
+        'mist': '#F3F2FF',
+        'muted': '#85839D',
+        'hairline': '#E8E5F5',
+        'danger': '#B42318',
       },
       borderRadius: {
         'DEFAULT': '1rem',
@@ -75,6 +88,9 @@ export default {
         'md': '0.75rem',
         'lg': '2rem',
         'xl': '3rem',
+        'sheet': '2rem',
+        'field': '1.125rem',
+        'control': '1rem',
         'full': '9999px',
       },
       spacing: {
@@ -108,6 +124,9 @@ export default {
         'fab-hover': '0 12px 28px rgba(190, 245, 50, 0.55)',
         'nav': '0 12px 32px rgba(11, 27, 43, 0.08)',
         'sm': '0 1px 4px rgba(0,0,0,0.04)',
+        'sheet': '0 32px 80px -24px rgba(11, 27, 43, 0.38)',
+        'key': '0 1px 2px rgba(11, 27, 43, 0.05)',
+        'pop': '0 18px 44px -12px rgba(11, 27, 43, 0.22)',
       },
       keyframes: {
         'orb-breathing': {

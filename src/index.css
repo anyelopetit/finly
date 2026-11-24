@@ -61,6 +61,48 @@
     user-select: none;
   }
 
+  /* Financial figures: fixed-width digits so amounts don't jitter while typing */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'ss01' 1;
+  }
+
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .caret-blink::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 0.82em;
+    margin-left: 3px;
+    border-radius: 1px;
+    background-color: currentColor;
+    opacity: 0.55;
+    vertical-align: -0.04em;
+    animation: finly-caret 1.15s steps(2, start) infinite;
+  }
+
+  @keyframes finly-caret {
+    0%, 45% { opacity: 0.55; }
+    46%, 100% { opacity: 0; }
+  }
+
+  .sheet-grabber {
+    width: 36px;
+    height: 4px;
+    border-radius: 9999px;
+    background-color: #e8e5f5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .caret-blink::after {
+      animation: none;
+    }
+  }
+
   /* Neon lime glow */
   .glow-lime {
     box-shadow: 0 8px 20px rgba(190, 245, 50, 0.4);

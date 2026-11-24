@@ -9,13 +9,13 @@ import type { Profile } from '@/types'
 
 export default function ProfilePage() {
   const { profile, updateProfile, resetToDemoData, clearAllData } = useDataStore()
-  const { exchangeRate, setExchangeRate } = useCurrencyStore()
+  const { exchangeRate, setManualRate } = useCurrencyStore()
   const [savedNotice, setSavedNotice] = useState(false)
 
   const handleSave = (updates: Partial<Profile>, newRate: number) => {
     updateProfile(updates)
     if (newRate > 0) {
-      setExchangeRate(newRate)
+      setManualRate(newRate)
     }
     setSavedNotice(true)
     setTimeout(() => setSavedNotice(false), 2500)

@@ -1,6 +1,7 @@
 export { default as TransactionsPage } from './pages/TransactionsPage'
 export { default as TransactionDetailPage } from './pages/TransactionDetailPage'
 export { AddTransactionModal } from './components/AddTransactionModal'
+export { NewTransactionModal } from './components/new-transaction/NewTransactionModal'
 export { TransactionItem } from './components/TransactionItem'
 export { ReceiptCard } from './components/ReceiptCard'
 export { useTransactions } from './hooks/useTransactions'

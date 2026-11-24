@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
+import { useCurrencyStore } from '@/store'
 
 import { DashboardPage } from '@/features/dashboard'
 import {
@@ -15,6 +17,14 @@ import { OnboardingPage } from '@/features/onboarding'
 export default function App() {
   const location = useLocation()
   const isOnboarding = location.pathname === '/onboarding'
+  const syncRates = useCurrencyStore((s) => s.syncRates)
+
+  useEffect(() => {
+    // Sincronizar tasa BCV en background con cacheo inteligente de 15 minutos
+    syncRates().catch(() => {
+      // Ignorar silenciosamente si no hay red, mantendrá el último valor bueno (stale)
+    })
+  }, [syncRates])
 
   return (
     <>
