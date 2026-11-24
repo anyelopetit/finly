@@ -40,6 +40,8 @@ import { DetailsSection } from './DetailsSection'
 import { AccountPanel } from './AccountPanel'
 import { DatePanel, isDateToday, isDateYesterday } from './DatePanel'
 import { RateEditor } from './RateEditor'
+import { ManageAccountsModal } from '@/features/accounts/components/ManageAccountsModal'
+import { CreateCategoryModal } from '@/features/categories/components/CreateCategoryModal'
 
 const EASE = [0.32, 0.72, 0, 1] as const
 
@@ -73,7 +75,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
   const reducedMotion = useReducedMotion() ?? false
   const isDesktop = useIsDesktop()
 
-  const { categories, addTransaction } = useDataStore()
+  const { categories, addTransaction, accounts } = useDataStore()
   const setLastCreatedTransactionId = useUIStore((state) => state.setLastCreatedTransactionId)
   const {
     activeCurrency,
@@ -93,6 +95,9 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
   const [editing, setEditing] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [categoryId, setCategoryId] = useState('')
+  const [subcategory, setSubcategory] = useState<string | null>(null)
+  const [isManageAccountsOpen, setIsManageAccountsOpen] = useState(false)
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false)
   const [description, setDescription] = useState('')
   const [date, setDate] = useState(() => format(new Date(), 'yyyy-MM-dd'))
   const [time, setTime] = useState<string | null>(null)
@@ -118,7 +123,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
     [categories, type]
   )
   const selectedAccount =
-    DEFAULT_ACCOUNTS.find((account) => account.id === accountId) ?? DEFAULT_ACCOUNTS[0]
+    accounts.find((account) => account.id === accountId) ?? accounts[0] ?? DEFAULT_ACCOUNTS[0]
 
   useEffect(() => {
     void syncRates()
@@ -355,6 +360,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
       date,
       time: time || null,
       account_id: accountId,
+      subcategory: subcategory || undefined,
       exchange_rate: roundToMicro(rate),
       exchange_rate_source: customRate ? 'MANUAL' : source,
       exchange_rate_date: effectiveDate,
@@ -742,7 +748,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
               >
                 <div className="pt-2">
                   <AccountPanel
-                    accounts={DEFAULT_ACCOUNTS}
+                    accounts={accounts}
                     selectedId={accountId}
                     onSelect={(account: Account) => {
                       setAccountId(account.id)
@@ -750,6 +756,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                       setPanel(null)
                     }}
                     onClose={() => setPanel(null)}
+                    onOpenManageAccounts={() => setIsManageAccountsOpen(true)}
                   />
                 </div>
               </motion.div>
@@ -821,6 +828,9 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                     onDescription={setDescription}
                     error={categoryError}
                     reducedMotion={reducedMotion}
+                    onOpenCreateCategory={() => setIsCreateCategoryOpen(true)}
+                    selectedSubcategory={subcategory}
+                    onSelectSubcategory={setSubcategory}
                   />
                 </div>
               </motion.div>
@@ -918,6 +928,25 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
           </span>
         </footer>
       </motion.div>
+
+      <ManageAccountsModal
+        isOpen={isManageAccountsOpen}
+        onClose={() => setIsManageAccountsOpen(false)}
+        onSelectAccount={(acc) => {
+          setAccountId(acc.id)
+          rememberLastAccountId(acc.id)
+        }}
+      />
+
+      <CreateCategoryModal
+        isOpen={isCreateCategoryOpen}
+        onClose={() => setIsCreateCategoryOpen(false)}
+        defaultType={type}
+        onCategoryCreated={(newCat) => {
+          setCategoryId(newCat.id)
+          setCategoryError('')
+        }}
+      />
     </div>
   )
 }
