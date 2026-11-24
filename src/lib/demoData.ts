@@ -12,6 +12,10 @@ export const DEMO_PROFILE: Profile = {
   initial_balance_usd: 1250.0,
   initial_balance_ves: 45000.0,
   tracking_start_date: '2026-01-01',
+  monthly_estimated_income: 850.0,
+  monthly_fixed_expenses: 320.0,
+  financial_priority: 'emergency_fund',
+  is_financial_profile_calibrated: true,
   created_at: '2026-01-01T00:00:00Z',
   updated_at: '2026-01-01T00:00:00Z',
 }

@@ -1,4 +1,5 @@
 import { useAnalytics } from '../hooks/useAnalytics'
+import { CalibrationBanner } from '../components/CalibrationBanner'
 import { CategoryPieChart } from '../components/CategoryPieChart'
 import { MonthlyComparisonBarChart } from '../components/MonthlyComparisonBarChart'
 import { AnalyticsSummaryCards } from '../components/AnalyticsSummaryCards'
@@ -60,6 +61,9 @@ export default function AnalyticsPage() {
           Histórico Total
         </button>
       </div>
+
+      {/* 0. Calibration Diagnostic Banner */}
+      <CalibrationBanner />
 
       {/* 1. Summary Cards */}
       <ErrorBoundary fallbackTitle="Resumen financiero no disponible">

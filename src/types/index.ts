@@ -327,6 +327,12 @@ export interface ExchangeRate {
 
 // ----- User Profile -----
 
+export type FinancialPriority =
+  | 'emergency_fund'
+  | 'debt_payoff'
+  | 'investing'
+  | 'savings_goal'
+
 export interface Profile {
   id: string
   display_name: string
@@ -335,6 +341,11 @@ export interface Profile {
   initial_balance_usd: number
   initial_balance_ves: number
   tracking_start_date: string
+  // Financial diagnosis calibration
+  monthly_estimated_income?: number
+  monthly_fixed_expenses?: number
+  financial_priority?: FinancialPriority
+  is_financial_profile_calibrated?: boolean
   created_at: string
   updated_at: string
 }

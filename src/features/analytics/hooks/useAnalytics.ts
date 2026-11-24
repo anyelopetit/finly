@@ -89,8 +89,11 @@ export function useAnalytics() {
       }
     })
 
-    const income = financials.total_income || (needs + wants)
-    const savings = Math.max(0, financials.balance)
+    const income =
+      financials.total_income > 0
+        ? financials.total_income
+        : (profile.monthly_estimated_income || (needs + wants))
+    const savings = Math.max(0, income - (needs + wants))
 
     const needsPct = income > 0 ? Math.round((needs / income) * 100) : 0
     const wantsPct = income > 0 ? Math.round((wants / income) * 100) : 0
@@ -114,9 +117,13 @@ export function useAnalytics() {
       .map((d) => d.Gastos)
       .filter((g) => g > 0)
 
-    const avgExpense = nonZeroExpenses.length > 0
-      ? nonZeroExpenses.reduce((a, b) => a + b, 0) / nonZeroExpenses.length
-      : financials.total_expenses || 1
+    // Use calibrated fixed expenses if set by user, otherwise calculate from history
+    const avgExpense =
+      profile.monthly_fixed_expenses && profile.monthly_fixed_expenses > 0
+        ? profile.monthly_fixed_expenses
+        : nonZeroExpenses.length > 0
+        ? nonZeroExpenses.reduce((a, b) => a + b, 0) / nonZeroExpenses.length
+        : financials.total_expenses || 1
 
     const monthsCovered = avgExpense > 0 ? currentBalance / avgExpense : 0
     const targetFund3Months = avgExpense * 3
@@ -179,5 +186,6 @@ export function useAnalytics() {
     emergencyFund,
     microExpenses,
     surplusAdvice,
+    profile,
   }
 }
