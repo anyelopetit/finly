@@ -5,16 +5,16 @@ import {
   Plus,
   Trash2,
   Check,
-  Building2,
+  Search,
   Sparkles,
 } from 'lucide-react'
 import { useDataStore } from '@/store'
 import { useCurrencyStore } from '@/store'
 import {
-  ACCOUNT_PRESETS,
   calculateAccountBalances,
   getAccountIconComponent,
   getAccountTypeLabel,
+  getSortedAccountPresets,
   type AccountPreset,
 } from '@/lib/accounts'
 import type { Account, AccountType, Currency } from '@/types'
@@ -32,22 +32,36 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
   const { exchangeRate } = useCurrencyStore()
 
   const [isCreating, setIsCreating] = useState(false)
+  const [currency, setCurrency] = useState<Currency>('USD')
+  const [searchQuery, setSearchQuery] = useState('')
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null)
 
   // Form states
   const [name, setName] = useState('')
   const [provider, setProvider] = useState('')
-  const [type, setType] = useState<AccountType>('bank_ve')
-  const [currency, setCurrency] = useState<Currency>('USD')
+  const [type, setType] = useState<AccountType>('cash')
   const [initialBalance, setInitialBalance] = useState('')
   const [accountNumber, setAccountNumber] = useState('')
-  const [color, setColor] = useState('#5D39AE')
-  const [icon, setIcon] = useState('Wallet')
+  const [color, setColor] = useState('#4D6700')
+  const [icon, setIcon] = useState('Banknote')
 
   // Calculate live balances
   const accountBalances = useMemo(() => {
     return calculateAccountBalances(accounts, transactions, exchangeRate)
   }, [accounts, transactions, exchangeRate])
+
+  // Presets sorted: Cash first, then A-Z, filtered by active tab and search query
+  const availablePresets = useMemo(() => {
+    const sorted = getSortedAccountPresets(currency)
+    if (!searchQuery.trim()) return sorted
+    const q = searchQuery.toLowerCase().trim()
+    return sorted.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.provider.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+    )
+  }, [currency, searchQuery])
 
   const handleSelectPreset = (preset: AccountPreset) => {
     setSelectedPresetId(preset.id)
@@ -59,9 +73,26 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
     setIcon(preset.iconName)
   }
 
+  const handleSwitchCurrency = (nextCurrency: Currency) => {
+    setCurrency(nextCurrency)
+    setSelectedPresetId(null)
+    setSearchQuery('')
+    // Default to Cash for the selected currency
+    const cashPreset = getSortedAccountPresets(nextCurrency)[0]
+    if (cashPreset) {
+      handleSelectPreset(cashPreset)
+    }
+  }
+
+  const handleStartCreating = () => {
+    setIsCreating(true)
+    handleSwitchCurrency(currency)
+  }
+
   const handleResetForm = () => {
     setIsCreating(false)
     setSelectedPresetId(null)
+    setSearchQuery('')
     setName('')
     setProvider('')
     setType('bank_ve')
@@ -141,7 +172,7 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
                   {!isCreating && (
                     <button
                       type="button"
-                      onClick={() => setIsCreating(true)}
+                      onClick={handleStartCreating}
                       className="inline-flex items-center gap-1.5 text-label-md font-bold text-primary hover:text-primary/80 transition-colors"
                     >
                       <Plus className="h-4 w-4" />
@@ -154,7 +185,6 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
                   {accounts.map((acc: Account) => {
                     const IconComp = getAccountIconComponent(acc.icon)
                     const bal = accountBalances[acc.id] || 0
-                    const isVeBank = acc.type === 'bank_ve'
 
                     return (
                       <div
@@ -249,42 +279,114 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
                     </button>
                   </div>
 
-                  {/* Preset Quick-Picks */}
+                  {/* 1. Currency Tabs (Shown FIRST) */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant mb-2">
-                      Selecciona un proveedor de Venezuela o USD
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                      1. Moneda de la cuenta
                     </label>
-                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-surface-container-lowest rounded-xl border border-hairline">
-                      {ACCOUNT_PRESETS.map((preset) => {
+                    <div className="flex rounded-2xl bg-surface-container-lowest border border-hairline p-1 shadow-xs">
+                      <button
+                        type="button"
+                        onClick={() => handleSwitchCurrency('USD')}
+                        className={cn(
+                          'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-label-md font-bold transition-all',
+                          currency === 'USD'
+                            ? 'bg-secondary-fixed text-on-secondary-fixed shadow-sm'
+                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                        )}
+                      >
+                        <span className="text-base">💵</span>
+                        <span>Dólares (USD)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSwitchCurrency('VES')}
+                        className={cn(
+                          'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-label-md font-bold transition-all',
+                          currency === 'VES'
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                        )}
+                      >
+                        <span className="text-base">🇻🇪</span>
+                        <span>Bolívares (VES)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 2. Alphabetical Payment Methods / Accounts list (Cash always first) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        2. Método de pago o banco ({availablePresets.length})
+                      </label>
+                      <span className="text-[10px] text-muted">Efectivo fijado • A-Z</span>
+                    </div>
+
+                    {/* Quick Search */}
+                    <div className="relative mb-2">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-on-surface-variant" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={`Buscar entre bancos y plataformas ${currency}...`}
+                        className="w-full pl-8.5 pr-3 py-1.5 rounded-xl bg-surface-container-lowest border border-hairline text-body-xs text-on-surface focus:outline-none focus:border-primary placeholder:text-on-surface-variant/60"
+                      />
+                    </div>
+
+                    {/* Scrollable list */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-52 overflow-y-auto p-1.5 bg-surface-container-lowest rounded-2xl border border-hairline">
+                      {availablePresets.map((preset) => {
                         const IconComp = getAccountIconComponent(preset.iconName)
                         const isSelected = selectedPresetId === preset.id
+                        const isCash = preset.type === 'cash'
+
                         return (
                           <button
                             key={preset.id}
                             type="button"
                             onClick={() => handleSelectPreset(preset)}
                             className={cn(
-                              'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border',
+                              'flex items-center gap-2.5 p-2 rounded-xl text-left transition-all border',
                               isSelected
-                                ? 'bg-primary text-white border-primary shadow-sm'
-                                : 'bg-surface-container-low text-on-surface border-transparent hover:bg-surface-container'
+                                ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs'
+                                : isCash
+                                ? 'bg-primary-fixed/20 border-primary/30 text-on-surface hover:bg-primary-fixed/40'
+                                : 'bg-surface-container-low/50 border-hairline text-on-surface hover:bg-surface-container'
                             )}
                           >
                             <span
-                              className="w-2.5 h-2.5 rounded-full"
+                              className="w-7 h-7 rounded-lg grid place-items-center text-white shadow-xs flex-shrink-0"
                               style={{ backgroundColor: preset.color }}
-                            />
-                            <IconComp className="h-3 w-3" />
-                            <span>{preset.name}</span>
+                            >
+                              <IconComp className="h-3.5 w-3.5" />
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1">
+                                <p className="text-[12px] font-bold truncate leading-tight">
+                                  {preset.name}
+                                </p>
+                                {isCash && (
+                                  <span className="text-[9px] bg-secondary-fixed/50 text-secondary-fixed-variant px-1 rounded font-bold">
+                                    Principal
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-on-surface-variant truncate">
+                                {preset.description}
+                              </p>
+                            </div>
+                            {isSelected && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
                           </button>
                         )
                       })}
                     </div>
                   </div>
 
-                  {/* Form Inputs */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                  {/* 3. Account Details Inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="sm:col-span-2">
                       <label className="block text-label-sm font-semibold text-on-surface mb-1">
                         Nombre de la cuenta
                       </label>
@@ -296,38 +398,6 @@ export function ManageAccountsModal({ isOpen, onClose, onSelectAccount }: Manage
                         placeholder="Ej. Banesco Móvil, Binance P2P"
                         className="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-hairline text-body-sm text-on-surface focus:outline-none focus:border-primary"
                       />
-                    </div>
-
-                    <div>
-                      <label className="block text-label-sm font-semibold text-on-surface mb-1">
-                        Moneda
-                      </label>
-                      <div className="flex rounded-xl bg-surface-container-lowest border border-hairline p-0.5">
-                        <button
-                          type="button"
-                          onClick={() => setCurrency('USD')}
-                          className={cn(
-                            'flex-1 py-1.5 rounded-lg text-label-sm font-bold transition-colors',
-                            currency === 'USD'
-                              ? 'bg-secondary-fixed text-on-secondary-fixed shadow-sm'
-                              : 'text-on-surface-variant hover:text-on-surface'
-                          )}
-                        >
-                          Dólares (USD)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCurrency('VES')}
-                          className={cn(
-                            'flex-1 py-1.5 rounded-lg text-label-sm font-bold transition-colors',
-                            currency === 'VES'
-                              ? 'bg-primary text-white shadow-sm'
-                              : 'text-on-surface-variant hover:text-on-surface'
-                          )}
-                        >
-                          Bolívares (VES)
-                        </button>
-                      </div>
                     </div>
 
                     <div>
