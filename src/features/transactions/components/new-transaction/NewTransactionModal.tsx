@@ -565,10 +565,10 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                     <motion.span
                       layoutId="movement-type-pill"
                       className={cn(
-                        'absolute inset-0 rounded-full border shadow-xs',
+                        'absolute inset-0 rounded-full shadow-xs',
                         isExpense
-                          ? 'border-error/20 bg-error-container/60'
-                          : 'border-secondary/20 bg-secondary-container/40'
+                          ? 'bg-error-container/60'
+                          : 'bg-secondary-container/40'
                       )}
                       transition={
                         reducedMotion
