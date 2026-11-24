@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts'
 import { formatCurrency, formatPercent } from '@/lib/calculations'
 import { usePrivacyStore } from '@/store'
@@ -28,6 +29,13 @@ export function CategoryPieChart({
   activeCurrency,
 }: CategoryPieChartProps) {
   const { isHidden } = usePrivacyStore()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // Avoid Recharts measuring 0 or negative width during route transition
+    const timer = setTimeout(() => setMounted(true), 120)
+    return () => clearTimeout(timer)
+  }, [])
 
   if (chartData.length === 0) {
     return (
@@ -42,32 +50,42 @@ export function CategoryPieChart({
 
   return (
     <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-sm space-y-4">
-      <h2 className="text-headline-sm font-bold text-on-surface">Gastos por Categoría</h2>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-headline-sm font-bold text-on-surface">Gastos por Categoría</h2>
+          <p className="text-body-sm text-on-surface-variant">Distribución porcentual de egresos</p>
+        </div>
+      </div>
 
-      <div className="h-56 w-full flex items-center justify-center">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={55}
-              outerRadius={85}
-              paddingAngle={3}
-              dataKey="value"
-            >
-              {chartData.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value: number) => [
-                formatCurrency(value, activeCurrency),
-                'Gasto',
-              ]}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="h-56 w-full flex items-center justify-center min-h-[224px]">
+        {mounted ? (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={55}
+                outerRadius={85}
+                paddingAngle={3}
+                dataKey="value"
+                isAnimationActive={true}
+              >
+                {chartData.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value: unknown) => [
+                  typeof value === 'number' ? formatCurrency(value, activeCurrency) : '',
+                  'Gasto',
+                ]}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="w-28 h-28 rounded-full border-4 border-dashed border-primary/20 animate-pulse" />
+        )}
       </div>
 
       {/* Category breakdown table */}
@@ -85,7 +103,7 @@ export function CategoryPieChart({
               <span className="font-bold text-on-surface">
                 {isHidden ? '••••••' : formatCurrency(item.total, activeCurrency)}
               </span>
-              <span className="text-label-sm text-on-surface-variant w-12 text-right">
+              <span className="text-label-sm text-on-surface-variant w-12 text-right font-medium">
                 {formatPercent(item.percentage)}
               </span>
             </div>

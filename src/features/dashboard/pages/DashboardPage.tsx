@@ -99,21 +99,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 5. Spending rhythm chart */}
-      <div className="bg-surface-container-lowest rounded-3xl p-space-lg shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-headline-sm font-bold text-on-surface">Ritmo de Gastos</h2>
-            <p className="text-body-sm text-on-surface-variant">Comparativo mensual</p>
-          </div>
-          <span className="text-label-sm bg-surface-container-low text-primary px-2.5 py-1 rounded-full font-semibold">
-            Semestre
-          </span>
-        </div>
-        <SpendingBars data={spendingData} />
-      </div>
-
-      {/* 6. Smart insight */}
+      {/* 5. Smart insight */}
       {insights.length > 0 ? (
         <InsightCard insight={insights[0]} />
       ) : (
