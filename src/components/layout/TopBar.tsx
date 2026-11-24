@@ -17,17 +17,24 @@ export function TopBar({ showLogo = true }: TopBarProps) {
     <>
       <header className="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe">
         <div className="h-16 px-margin flex items-center justify-between gap-2">
-          {/* Brand */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Brand & Logo with F. and link to home */}
+          <Link
+            to="/"
+            title="Ir a Inicio"
+            className="flex items-center gap-2 shrink-0 cursor-pointer group select-none"
+          >
             {showLogo && (
-              <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-                <span className="text-on-primary font-bold text-headline-sm">F</span>
+              <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-xs transition-transform group-hover:scale-105 active:scale-95">
+                <span className="font-extrabold text-headline-sm leading-none flex items-baseline tracking-tight">
+                  <span className="text-on-primary">F</span>
+                  <span className="text-secondary-fixed text-xl leading-none -ml-0.5 font-black">.</span>
+                </span>
               </div>
             )}
-            <span className="text-headline-sm font-bold text-on-surface tracking-tight">
+            <span className="text-headline-sm font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">
               Finly
             </span>
-          </div>
+          </Link>
 
           {/* BCV Exchange Rate Pill */}
           <motion.button
