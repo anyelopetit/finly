@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion'
+import { useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import type { Transaction } from '@/types'
 import { formatCurrency } from '@/lib/calculations'
-import { usePrivacyStore } from '@/store'
+import { usePrivacyStore, useUIStore } from '@/store'
 import { CategoryIcon } from '@/components/common/CategoryIcon'
 import { format, parseISO, isToday, isYesterday } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -28,6 +29,18 @@ function formatRelativeDate(dateStr: string): string {
 export function TransactionItem({ transaction, index = 0 }: TransactionItemProps) {
   const navigate = useNavigate()
   const { isHidden } = usePrivacyStore()
+  const { lastCreatedTransactionId, setLastCreatedTransactionId } = useUIStore()
+
+  const isNewlyCreated = lastCreatedTransactionId === transaction.id
+
+  useEffect(() => {
+    if (isNewlyCreated) {
+      const timer = setTimeout(() => {
+        setLastCreatedTransactionId(null)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [isNewlyCreated, setLastCreatedTransactionId])
 
   const isIncome = transaction.type === 'income'
   const colorClass = isIncome ? categoryColors.income : categoryColors.expense
@@ -36,16 +49,30 @@ export function TransactionItem({ transaction, index = 0 }: TransactionItemProps
 
   return (
     <motion.div
+      layout
       layoutId={`transaction-${transaction.id}`}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: isNewlyCreated ? -18 : 8, scale: isNewlyCreated ? 0.95 : 1 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        backgroundColor: isNewlyCreated
+          ? ['rgba(190,245,50,0.35)', 'rgba(190,245,50,0.12)', 'rgba(255,255,255,0)']
+          : 'rgba(255,255,255,0)',
+      }}
       transition={{
-        delay: index * 0.05,
-        duration: 0.3,
+        layout: { type: 'spring', stiffness: 350, damping: 28 },
+        delay: isNewlyCreated ? 0 : index * 0.04,
+        duration: isNewlyCreated ? 1.5 : 0.3,
         ease: [0.4, 0, 0.2, 1],
       }}
       onClick={() => navigate(`/movimientos/${transaction.id}`)}
-      className="flex items-center justify-between p-2.5 rounded-DEFAULT hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
+      className={cn(
+        'relative flex items-center justify-between p-2.5 rounded-2xl transition-all cursor-pointer group',
+        isNewlyCreated
+          ? 'ring-2 ring-secondary-fixed shadow-[0_4px_16px_rgba(190,245,50,0.35)]'
+          : 'hover:bg-surface-container-low active:bg-surface-container'
+      )}
     >
       {/* Category icon */}
       <div className="flex items-center gap-3">
@@ -65,9 +92,24 @@ export function TransactionItem({ transaction, index = 0 }: TransactionItemProps
 
         {/* Description + meta */}
         <div>
-          <p className="text-label-lg font-semibold text-on-surface leading-snug">
-            {transaction.description ?? transaction.category?.name ?? 'Movimiento'}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-label-lg font-semibold text-on-surface leading-snug">
+              {transaction.description ?? transaction.category?.name ?? 'Movimiento'}
+            </p>
+            <AnimatePresence>
+              {isNewlyCreated && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: 'spring', stiffness: 450, damping: 20 }}
+                  className="text-[10px] uppercase tracking-wider font-extrabold bg-secondary-fixed text-on-secondary-fixed px-1.5 py-0.5 rounded-full shadow-sm"
+                >
+                  Nuevo
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
           <p className="text-body-sm text-on-surface-variant">
             {transaction.category?.name} &bull;{' '}
             {formatRelativeDate(transaction.date)}

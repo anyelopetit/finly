@@ -49,6 +49,8 @@ interface UIState {
   closeAddTransaction: () => void
   activeBottomTab: string
   setActiveBottomTab: (tab: string) => void
+  lastCreatedTransactionId: string | null
+  setLastCreatedTransactionId: (id: string | null) => void
 }
 
 export const useUIStore = create<UIState>()((set) => ({
@@ -57,4 +59,6 @@ export const useUIStore = create<UIState>()((set) => ({
   closeAddTransaction: () => set({ isAddTransactionOpen: false }),
   activeBottomTab: 'inicio',
   setActiveBottomTab: (activeBottomTab) => set({ activeBottomTab }),
+  lastCreatedTransactionId: null,
+  setLastCreatedTransactionId: (lastCreatedTransactionId) => set({ lastCreatedTransactionId }),
 }))

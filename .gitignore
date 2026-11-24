@@ -7,12 +7,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Node modules
+# Node modules & environments
 node_modules
+.venv/
 dist
 dist-ssr
+out/
+build/
 *.local
 *.tsbuildinfo
+
+# Video projects & media artifacts
+finly-promo/
+gemini-showcase-video/
+*.mp4
+*.wav
+*.mp3
 
 # Editor directories and files
 .vscode/*

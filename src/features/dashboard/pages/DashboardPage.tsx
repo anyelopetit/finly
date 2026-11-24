@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivacyStore, useUIStore } from '@/store'
 import { useDashboard } from '../hooks/useDashboard'
 import { HeroBalanceCard } from '../components/HeroBalanceCard'
@@ -39,7 +40,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col w-full pb-8 space-y-4 pt-1">
-      {/* Greeting */}
+      {/* 1. Greeting */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold capitalize">
@@ -51,7 +52,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Hero Balance Card */}
+      {/* 2. Hero Balance Card */}
       <HeroBalanceCard
         balance={currentBalance}
         changePercent={changePercent}
@@ -59,15 +60,47 @@ export default function DashboardPage() {
         exchangeRate={exchangeRate}
       />
 
-      {/* Income / Expense pills */}
+      {/* 3. Monthly Income / Expense pills */}
       <FinancialSummaryPills
         currentFinancials={currentFinancials}
         prevFinancials={prevFinancials}
         currency={activeCurrency}
       />
 
-      {/* Spending rhythm chart */}
-      <div className="bg-surface-container-lowest rounded-lg p-space-lg shadow-sm">
+      {/* 4. Recent transactions — positioned directly after balance and monthly financials */}
+      <div className="bg-surface-container-lowest rounded-3xl p-space-lg shadow-sm space-y-3">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <h2 className="text-headline-sm font-bold text-on-surface">Movimientos Recientes</h2>
+            <span className="text-label-sm font-semibold bg-surface-container-low text-primary px-2 py-0.5 rounded-full">
+              Últimos {recentTransactions.length}
+            </span>
+          </div>
+          <Link to="/movimientos" className="text-label-sm text-primary font-bold hover:underline">
+            Ver historial
+          </Link>
+        </div>
+
+        {!hasTransactions ? (
+          <EmptyState
+            icon="receipt"
+            title="¡Empecemos!"
+            description="Registra tu primer ingreso o gasto para conocer mejor tus finanzas."
+            actionLabel="Registrar movimiento"
+          />
+        ) : (
+          <motion.div layout className="space-y-1">
+            <AnimatePresence initial={false}>
+              {recentTransactions.map((t, i) => (
+                <TransactionItem key={t.id} transaction={t} index={i} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </div>
+
+      {/* 5. Spending rhythm chart */}
+      <div className="bg-surface-container-lowest rounded-3xl p-space-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-headline-sm font-bold text-on-surface">Ritmo de Gastos</h2>
@@ -80,16 +113,16 @@ export default function DashboardPage() {
         <SpendingBars data={spendingData} />
       </div>
 
-      {/* Smart insight */}
+      {/* 6. Smart insight */}
       {insights.length > 0 ? (
         <InsightCard insight={insights[0]} />
       ) : (
         <InsightPlaceholder />
       )}
 
-      {/* Goals summary */}
+      {/* 7. Goals summary */}
       {topGoals.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-lg p-space-lg shadow-sm space-y-4">
+        <div className="bg-surface-container-lowest rounded-3xl p-space-lg shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-secondary-fixed/30 flex items-center justify-center text-on-secondary-container">
@@ -112,32 +145,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Recent transactions */}
-      <div className="bg-surface-container-lowest rounded-lg p-space-lg shadow-sm space-y-3">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-headline-sm font-bold text-on-surface">Movimientos Recientes</h2>
-          <Link to="/movimientos" className="text-label-sm text-primary font-bold">
-            Ver historial
-          </Link>
-        </div>
-
-        {!hasTransactions ? (
-          <EmptyState
-            icon="receipt"
-            title="¡Empecemos!"
-            description="Registra tu primer ingreso o gasto para conocer mejor tus finanzas."
-            actionLabel="Registrar movimiento"
-          />
-        ) : (
-          <div className="space-y-1">
-            {recentTransactions.map((t, i) => (
-              <TransactionItem key={t.id} transaction={t} index={i} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Full-width CTA button */}
+      {/* 8. Full-width CTA button */}
       <Button
         variant="secondary"
         fullWidth
