@@ -6,6 +6,7 @@ import { AnalyticsSummaryCards } from '../components/AnalyticsSummaryCards'
 import { Budget503020Card } from '../components/Budget503020Card'
 import { EmergencyFundCard } from '../components/EmergencyFundCard'
 import { FinancialStrategiesCard } from '../components/FinancialStrategiesCard'
+import { AnalyticsEmptyState } from '../components/AnalyticsEmptyState'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 
 export default function AnalyticsPage() {
@@ -22,7 +23,29 @@ export default function AnalyticsPage() {
     emergencyFund,
     microExpenses,
     surplusAdvice,
+    hasTransactions,
+    profile,
   } = useAnalytics()
+
+  if (!hasTransactions) {
+    return (
+      <div className="flex flex-col w-full pb-8 space-y-5 pt-1">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-headline-lg text-on-surface font-bold tracking-tight">
+              Análisis Financiero
+            </h1>
+            <p className="text-body-sm text-on-surface-variant">
+              Diagnóstico, ritmo de gastos y estrategias para hacer crecer tu dinero
+            </p>
+          </div>
+        </div>
+
+        <CalibrationBanner />
+        <AnalyticsEmptyState />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col w-full pb-8 space-y-5 pt-1">
@@ -114,6 +137,7 @@ export default function AnalyticsPage() {
           surplusAdvice={surplusAdvice}
           microExpenses={microExpenses}
           currency={activeCurrency}
+          profile={profile}
         />
       </ErrorBoundary>
     </div>
