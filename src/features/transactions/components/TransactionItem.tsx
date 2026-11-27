@@ -49,28 +49,23 @@ export function TransactionItem({ transaction, index = 0 }: TransactionItemProps
 
   return (
     <motion.div
-      layout
-      layoutId={`transaction-${transaction.id}`}
-      initial={{ opacity: 0, y: isNewlyCreated ? -18 : 8, scale: isNewlyCreated ? 0.95 : 1 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        backgroundColor: isNewlyCreated
-          ? ['rgba(190,245,50,0.35)', 'rgba(190,245,50,0.12)', 'rgba(255,255,255,0)']
-          : 'rgba(255,255,255,0)',
-      }}
+      layout="position"
+      initial={{ opacity: 0, y: isNewlyCreated ? -12 : 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
       transition={{
-        layout: { type: 'spring', stiffness: 350, damping: 28 },
-        delay: isNewlyCreated ? 0 : index * 0.04,
-        duration: isNewlyCreated ? 1.5 : 0.3,
-        ease: [0.4, 0, 0.2, 1],
+        duration: isNewlyCreated ? 0.45 : 0.25,
+        ease: [0.42, 0, 0.58, 1],
+        layout: {
+          duration: 0.38,
+          ease: [0.42, 0, 0.58, 1],
+        },
       }}
       onClick={() => navigate(`/movimientos/${transaction.id}`)}
       className={cn(
         'relative flex items-center justify-between p-2.5 rounded-2xl transition-all cursor-pointer group',
         isNewlyCreated
-          ? 'ring-2 ring-secondary-fixed shadow-[0_4px_16px_rgba(190,245,50,0.35)]'
+          ? 'ring-2 ring-secondary-fixed bg-secondary-fixed/10 shadow-[0_4px_16px_rgba(190,245,50,0.25)]'
           : 'hover:bg-surface-container-low active:bg-surface-container'
       )}
     >

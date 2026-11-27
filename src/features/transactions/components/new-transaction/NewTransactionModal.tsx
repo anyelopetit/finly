@@ -124,6 +124,15 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
   )
   const selectedAccount =
     accounts.find((account) => account.id === accountId) ?? accounts[0] ?? DEFAULT_ACCOUNTS[0]
+  const hasAccounts = accounts.length > 0
+
+  useEffect(() => {
+    if (accounts.length === 0) return
+    if (accounts.some((account) => account.id === accountId)) return
+    const first = accounts[0]
+    setAccountId(first.id)
+    rememberLastAccountId(first.id)
+  }, [accounts, accountId])
 
   useEffect(() => {
     void syncRates()
@@ -314,6 +323,10 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
 
   const handleSave = () => {
     if (saved) return
+    if (accounts.length === 0 || !accounts.some((account) => account.id === accountId)) {
+      setIsManageAccountsOpen(true)
+      return
+    }
 
     const result = resolveExpression()
     if ('error' in result) {
@@ -372,7 +385,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
     setEntry(toEntryValue(value))
     setSaved(true)
     setEditing(false)
-    window.setTimeout(onClose, reducedMotion ? 120 : 560)
+    window.setTimeout(onClose, reducedMotion ? 100 : 280)
   }
 
   // Physical keyboard: full calculator entry on desktop.
@@ -519,7 +532,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
             id="movement-title"
             className="text-[19px] font-semibold tracking-[-0.025em] text-ink"
           >
-            Nuevo movimiento
+            {hasAccounts ? 'Nuevo movimiento' : 'Primero, tu cuenta'}
           </h2>
           <motion.button
             type="button"
@@ -543,6 +556,46 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
           }}
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-1"
         >
+          {!hasAccounts ? (
+            <div className="flex flex-col items-center py-7 text-center">
+              <div className="grid h-14 w-14 place-items-center rounded-[20px] bg-lav-soft text-ink">
+                <Wallet className="h-6 w-6" strokeWidth={1.8} />
+              </div>
+              <span className="mt-3 rounded-full bg-mist px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted">
+                Paso 1 de 2
+              </span>
+              <h3 className="mt-2 text-[20px] font-semibold tracking-[-0.02em] text-ink">
+                Configura tu cuenta principal
+              </h3>
+              <p className="mt-1 max-w-[290px] text-[13px] leading-5 text-muted">
+                Para registrar un movimiento necesitas una cuenta. Así Finly sabe de dónde sale o
+                entra el dinero.
+              </p>
+
+              <div className="mt-4 w-full rounded-2xl border border-hairline bg-lav-tint p-3.5 text-left">
+                <p className="text-[12.5px] font-semibold text-ink">Tu saldo inicial no es un gasto</p>
+                <p className="mt-0.5 text-[11.5px] leading-4 text-muted">
+                  Es el dinero que ya tienes hoy. Puedes empezar en 0 y actualizarlo cuando quieras.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsManageAccountsOpen(true)}
+                className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-[16px] bg-accent text-[14px] font-semibold text-ink shadow-[0_10px_24px_-14px_rgba(168,222,30,1)] transition-transform active:scale-[0.99]"
+              >
+                Crear mi primera cuenta
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-2 rounded-full px-3 py-2 text-[12px] font-medium text-muted hover:bg-mist hover:text-ink"
+              >
+                Ahora no
+              </button>
+            </div>
+          ) : (
+            <>
           {/* Gasto / Ingreso */}
           <div
             className="relative grid grid-cols-2 rounded-full bg-surface-container-low p-1"
@@ -568,8 +621,8 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                     'relative z-10 h-9 rounded-full text-[13px] font-bold tracking-[-0.01em] transition-colors duration-150',
                     active
                       ? isExpense
-                        ? 'text-error'
-                        : 'text-secondary'
+                        ? 'text-white'
+                        : 'text-ink'
                       : 'text-on-surface-variant/80 hover:text-on-surface'
                   )}
                 >
@@ -577,10 +630,10 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
                     <motion.span
                       layoutId="movement-type-pill"
                       className={cn(
-                        'absolute inset-0 rounded-full shadow-xs',
+                        'absolute inset-0 rounded-full transition-colors duration-150',
                         isExpense
-                          ? 'bg-error-container/60'
-                          : 'bg-secondary-container/40'
+                          ? 'bg-error shadow-[0_4px_14px_-6px_rgba(186,26,26,0.55)]'
+                          : 'bg-accent-soft shadow-[0_4px_14px_-6px_rgba(168,222,30,0.6)]'
                       )}
                       transition={
                         reducedMotion
@@ -867,10 +920,12 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
           </AnimatePresence>
 
           <div className="h-2" />
+            </>
+          )}
         </div>
 
         <footer
-          className="shrink-0 bg-white px-5 pt-2"
+          className={cn('shrink-0 bg-white px-5 pt-2', !hasAccounts && 'hidden')}
           style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
         >
           <motion.button
@@ -935,6 +990,7 @@ function MovementSheet({ onClose }: { onClose: () => void }) {
         onSelectAccount={(acc) => {
           setAccountId(acc.id)
           rememberLastAccountId(acc.id)
+          setIsManageAccountsOpen(false)
         }}
       />
 
